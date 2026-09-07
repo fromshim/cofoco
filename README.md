@@ -1,65 +1,44 @@
-# Omija
+# TodoCrew
 
-Omija is a worktree-native agent harness for coordinating coding agents, isolated workspaces, verification, and Git integration.
+**Todos shared by you and your agents.**
 
-The project starts as a CLI harness and is designed to grow into a desktop Agentic Development Environment (ADE) without making Orca a permanent dependency.
+TodoCrew (`todocrew` package/future CLI) is a local-first desktop todo companion. A pet keeps coarse commitments visible in a speech bubble while you switch between personal work, projects and agent sessions.
 
-## Documentation
+The list has three states: **안 함 → 하는 중 → 완료**. Optional one-level **Steps** hold milestones; **Notes** hold context. Personal and logical projects are flat scopes with optional folder bindings. All is a view.
 
-- [Architecture overview](docs/architecture-overview.md)
-- [Phase 0: integration engine + orchestration skill](docs/phase-0-slice-design.md)
+Connected agents can capture agreed Todos, start work and maintain Steps. Important changes to an existing Todo become reviewable proposals. Users control the list through the pet app.
 
-## Integration engine
+## Current status
 
-Five commands own every git operation that can lose work. They have no runtime
-dependencies and no build step: Node 24 runs the TypeScript sources directly.
+**V1 specification is finalized; TodoCrew features are not implemented.** There is no todo database, daemon, MCP server, new CLI or pet UI yet. Initial delivery/validation targets one Mac with local Claude Code and Codex CLI.
 
-```text
-omija preflight   --run <id> --base <ref>
-omija stage       --run <id> --task <id> --branch <branch>
-omija scope-check --run <id> --branch <branch> --allow <glob>...
-omija preview     --run <id> --order <task-id,task-id,...>
-omija apply       --run <id> --base <ref>
-```
+The only executable code is the preserved [Omija Git engine](packages/git-engine/README.md). Its 26 tests do not validate TodoCrew features.
 
-State lives in git refs, not a database:
+## Start here
 
-```text
-refs/omija/base/<run-id>                frozen base commit
-refs/omija/staging/<run-id>/<task-id>   copy of a task branch head
-refs/omija/integration/<run-id>         candidate history
-refs/omija/archive/<run-id>/<task-id>   kept after apply
-refs/omija/lane/<run-id>/<task-id>      task contract: agent, scope, verify
-```
+- [Product specification](docs/product-spec.md): Todo/Step/Note, scopes, states, approval policy and UI behavior.
+- [Architecture](docs/architecture.md): service ownership, revision/events, proposals, permissions and MCP contract.
+- [V1 backlog and acceptance](docs/vertical-slice-1.md): coarse development Todos, Steps and acceptance evidence.
+- [V1 reconciliation decision](docs/decisions/0002-todocrew-v1.md): conflicts resolved, user decisions and design defaults.
+- [Current handoff](docs/handoffs/omija-to-todocrew.md): concise context for continuing sessions.
+- [Changelog](CHANGELOG.md).
+
+Next work: UI direction/wireframes, then the runtime spike and core/MCP implementation, pet implementation, and real two-provider dogfooding. IDE/Git GUI, agent supervision, cloud/mobile/team features and other desktop OS releases are deferred.
+
+## Development today
+
+Node.js 24+ and pnpm are required for the preserved engine:
 
 ```bash
-pnpm install
-pnpm test        # real git operations against throwaway repositories
+pnpm install --frozen-lockfile
+pnpm test
 pnpm typecheck
 ```
 
-## Orchestration skill
+These commands only cover `packages/git-engine`. There is no root `bin` entry until the actual TodoCrew CLI exists.
 
-[`skill/SKILL.md`](skill/SKILL.md) drives Orca worktrees and workers, and calls
-the commands above for anything involving git. The Orca dependency lives only in
-that file, so replacing it later means rewriting prose rather than code.
+The local checkout remains `omija`; saved projects, other sessions and external installations are not implicitly renamed.
 
-## Status
+## Original Omija
 
-The integration engine is done and covered by tests that run real git against
-throwaway repositories: scope enforcement, staging, conflict reporting, linear
-preview, base-drift refusal, and fast-forward apply.
-
-The orchestration skill is written but has not yet driven real Claude and Codex
-workers through a full run. That is the next thing to do, and it is what decides
-which of the assumptions in
-[the Phase 0 design](docs/phase-0-slice-design.md) §13 hold.
-
-After that comes the run view: `omija status <run-id>` draws one lane per
-worktree from the refs alone, so the answer to "how far is each lane" stops
-being something a person assembles from an Orca sidebar and `git log`. It reads
-refs and nothing else, which keeps the Orca dependency inside the skill. See
-[Architecture overview](docs/architecture-overview.md) §7.1 and Phase 3.5.
-
-Not yet: task dependencies, running without Orca, cross-provider review cycles,
-budget and model routing, live process state in the run view, desktop.
+Git tag `omija-phase0` at commit `974ca87` preserves the original implementation. [Historical ADE docs and inactive skill](docs/archive/omija-ade/README.md) are not the current roadmap. [ADR 0001](docs/decisions/0001-pivot-omija-to-agentodo.md) records the earlier AgenTODO working name; [ADR 0002](docs/decisions/0002-todocrew-v1.md) establishes the current contract.

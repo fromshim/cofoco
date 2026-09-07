@@ -12,5 +12,5 @@
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["src", "test"]
+  "include": ["packages/git-engine/src", "packages/git-engine/test"]
 }

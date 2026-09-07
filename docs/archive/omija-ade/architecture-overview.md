@@ -1,6 +1,8 @@
 # Omija Architecture Overview
 
-> Status: draft
+> Status: **Superseded** on 2026-09-04. Current direction: [TodoCrew product spec](../../product-spec.md) and [architecture](../../architecture.md).
+> Historical context only. Do not use as the current product direction.
+> Original snapshot: Git tag `omija-phase0` (commit `974ca87`).
 > Last updated: 2026-08-24
 
 ## 1. 문서 목적

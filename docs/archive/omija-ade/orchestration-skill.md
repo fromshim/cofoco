@@ -1,3 +1,12 @@
+# Archived Omija orchestration skill
+
+> Status: **Superseded** on 2026-09-04. Current direction: [TodoCrew product spec](../../product-spec.md).
+> Historical instructions, not an active skill. Do not execute this workflow for TodoCrew V1.
+> Renamed from `skill/SKILL.md` so it is not presented as an installable current workflow.
+> Original snapshot: Git tag `omija-phase0` (commit `974ca87`).
+
+Original skill metadata and instructions follow; all paths describe the old layout.
+
 ---
 name: omija
 description: Run a coding goal across several isolated worktrees and land the results as one linear history. Use when work splits into independent pieces that different agents can do in parallel, when the user says "omija", "쪼개서 병렬로", "worktree 나눠서", "여러 에이전트로 돌려", "run this across worktrees", or when a change is large enough that one session would serialize it. Orchestrates Orca worktrees and workers, then uses the omija CLI to preview and fast-forward the combined result.

@@ -1,15 +1,13 @@
 {
-  "name": "omija",
+  "name": "todocrew",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Integration engine for worktree-native agent orchestration",
-  "bin": {
-    "omija": "./src/cli.ts"
-  },
+  "description": "A local-first todo companion shared by you and your agents",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "node --test test/*.test.ts"
+    "test": "node --test packages/git-engine/test/*.test.ts",
+    "test:git-engine": "node --test packages/git-engine/test/*.test.ts"
   },
   "engines": {
     "node": ">=24"
