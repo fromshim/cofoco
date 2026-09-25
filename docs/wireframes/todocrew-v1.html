@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cofoco V1 · macOS bubble wireframe</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d1d1f;
+      --ink-2: rgba(60, 60, 67, .68);
+      --ink-3: rgba(60, 60, 67, .48);
+      --desktop-a: #e9eaed;
+      --desktop-b: #cdd1d9;
+      --glass: rgba(248, 248, 250, .72);
+      --glass-strong: rgba(255, 255, 255, .86);
+      --content: rgba(255, 255, 255, .46);
+      --content-hover: rgba(255, 255, 255, .64);
+      --line: rgba(60, 60, 67, .2);
+      --line-strong: rgba(60, 60, 67, .3);
+      --system-accent: #0a84ff;
+      --success: #248a3d;
+      --danger: #d70015;
+      --shadow: 0 10px 30px rgba(30, 30, 32, .18), 0 2px 7px rgba(30, 30, 32, .1);
+      --project-rescoop: #5e46b3;
+      --project-wiki: #0b6c72;
+      --project-anniv: #8f4c10;
+      --project-personal: rgba(60, 60, 67, .62);
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #f5f5f7;
+      --ink-2: rgba(235, 235, 245, .6);
+      --ink-3: rgba(235, 235, 245, .4);
+      --desktop-a: #202124;
+      --desktop-b: #121315;
+      --glass: rgba(30, 30, 32, .74);
+      --glass-strong: rgba(38, 38, 40, .9);
+      --content: rgba(255, 255, 255, .055);
+      --content-hover: rgba(255, 255, 255, .1);
+      --line: rgba(235, 235, 245, .16);
+      --line-strong: rgba(235, 235, 245, .28);
+      --system-accent: #409cff;
+      --success: #30d158;
+      --danger: #ff453a;
+      --shadow: 0 12px 32px rgba(0, 0, 0, .42), 0 2px 8px rgba(0, 0, 0, .3);
+      --project-rescoop: #b7a6f5;
+      --project-wiki: #72d1d3;
+      --project-anniv: #f3b875;
+      --project-personal: rgba(235, 235, 245, .6);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #d6d8dc;
+      font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; cursor: pointer; touch-action: manipulation; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--system-accent);
+      outline-offset: 2px;
+    }
+
+    .prototype { min-height: 100vh; display: grid; grid-template-columns: 224px minmax(620px, 1fr); }
+    .guide {
+      z-index: 5;
+      padding: 24px 16px;
+      background: color-mix(in srgb, var(--glass-strong), transparent 8%);
+      border-right: 1px solid var(--line);
+      backdrop-filter: blur(24px) saturate(115%);
+      -webkit-backdrop-filter: blur(24px) saturate(115%);
+    }
+    .wordmark { margin: 0 0 2px; font: 650 19px/1.2 ui-rounded, "SF Pro Rounded", -apple-system, sans-serif; letter-spacing: -.03em; }
+    .meta { color: var(--ink-2); font-size: 11px; }
+    .guide h2 { margin: 24px 0 8px; color: var(--ink-2); font-size: 11px; font-weight: 600; }
+    .scenario-list { display: grid; gap: 3px; }
+    .scenario {
+      width: 100%; min-height: 32px; padding: 6px 9px; border: 1px solid transparent; border-radius: 8px;
+      background: transparent; color: var(--ink-2); text-align: left; transition: background 120ms ease, color 120ms ease;
+    }
+    .scenario:hover { background: var(--content); color: var(--ink); }
+    .scenario.active { background: var(--content-hover); border-color: var(--line); color: var(--ink); font-weight: 600; }
+    .theme-toggle { width: 100%; min-height: 32px; border: 1px solid var(--line); border-radius: 8px; background: var(--content); text-align: left; padding: 5px 9px; color: var(--ink-2); }
+    .theme-toggle:hover { background: var(--content-hover); color: var(--ink); }
+    .pet-preview-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+    .pet-preview-button { min-height: 30px; padding: 5px 7px; border: 0; border-radius: 7px; background: transparent; color: var(--ink-2); font-size: 11px; text-align: left; }
+    .pet-preview-button:hover, .pet-preview-button.active { background: var(--content-hover); color: var(--ink); }
+    .pet-preview-button.active { font-weight: 600; }
+
+    .desktop {
+      position: relative; min-height: 100vh; overflow: hidden;
+      background: var(--desktop-b);
+    }
+    .menu-bar {
+      position: absolute; inset: 0 0 auto; height: 28px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 13px; background: rgba(255,255,255,.18); border-bottom: 1px solid rgba(0,0,0,.08); color: var(--ink-2); font-size: 11px;
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    }
+    [data-theme="dark"] .menu-bar { background: rgba(0,0,0,.16); border-color: rgba(255,255,255,.08); }
+    .menu-left, .menu-right { display: flex; gap: 13px; align-items: center; }
+    .pet-stack { position: absolute; z-index: 3; right: 66px; bottom: 20px; display: flex; flex-direction: column; align-items: flex-end; }
+    .change-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; margin-bottom: 9px; width: 324px; }
+    .change-bubble {
+      position: relative; width: 304px; padding: 11px 12px 10px; border: 1px solid var(--line-strong); border-radius: 16px;
+      background: var(--glass-strong); box-shadow: var(--shadow); backdrop-filter: blur(26px) saturate(135%); -webkit-backdrop-filter: blur(26px) saturate(135%);
+      animation: change-in 180ms ease-out;
+    }
+    .change-bubble::after { content: ""; position: absolute; right: 35px; bottom: -6px; width: 11px; height: 11px; transform: rotate(45deg); background: var(--glass-strong); border-right: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+    @keyframes change-in { from { opacity: 0; transform: translateY(7px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .change-top, .bubble-top, .detail-top { display: flex; align-items: center; gap: 8px; }
+    .change-top { justify-content: space-between; margin-bottom: 5px; }
+    .change-kicker { color: var(--ink-2); font-size: 10px; font-weight: 600; letter-spacing: .02em; }
+    .change-count { color: var(--ink-3); font-size: 10px; }
+    .change-title { margin: 0 0 3px; font-size: 12px; font-weight: 600; }
+    .change-body { margin: 0; color: var(--ink-2); font-size: 11px; }
+    .change-diff { display: grid; gap: 3px; margin: 8px 0; padding: 7px 8px; border-radius: 8px; background: var(--content); color: var(--ink-2); font-size: 10px; }
+    .change-diff s { color: var(--ink-3); }
+    .change-actions { display: flex; justify-content: flex-end; gap: 5px; margin-top: 8px; }
+    .button { min-height: 26px; padding: 3px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--content); font-size: 11px; }
+    .button:hover { background: var(--content-hover); }
+    .button.primary { border-color: transparent; background: var(--system-accent); color: white; }
+    .button.primary:hover { filter: brightness(1.08); }
+    .button.destructive { color: var(--danger); }
+    .icon-button { display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 7px; background: transparent; color: var(--ink-2); }
+    .icon-button:hover { background: var(--content); color: var(--ink); }
+
+    .bubble {
+      position: relative; width: 324px; height: 374px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 20px;
+      background: var(--glass); box-shadow: var(--shadow); backdrop-filter: blur(28px) saturate(125%); -webkit-backdrop-filter: blur(28px) saturate(125%);
+      transform-origin: calc(100% - 45px) 100%; animation: bubble-in 180ms ease-out;
+    }
+    .bubble::after { content: ""; position: absolute; right: 35px; bottom: -7px; width: 15px; height: 15px; transform: rotate(45deg); background: var(--glass); border-right: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+    .bubble.hidden { display: none; }
+    @keyframes bubble-in { from { opacity: 0; transform: translateY(5px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .bubble-body { height: 100%; display: none; flex-direction: column; }
+    .bubble-body.active { display: flex; }
+    .bubble-top { min-height: 40px; padding: 8px 10px 7px 13px; }
+    .bubble-title { flex: 1; min-width: 0; font-size: 14px; font-weight: 650; letter-spacing: -.015em; }
+    .scope-button { display: inline-flex; align-items: center; gap: 5px; max-width: calc(100% - 34px); min-width: 0; min-height: 26px; margin-right: auto; padding: 2px 4px; border: 0; border-radius: 6px; background: transparent; color: var(--ink); font-size: 14px; font-weight: 650; letter-spacing: -.015em; }
+    .scope-button:hover { background: var(--content); }
+    #scopeLabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .scope-chevron { color: var(--ink-2); font-size: 11px; font-weight: 500; }
+    .popover { position: absolute; z-index: 10; top: 36px; right: 37px; min-width: 140px; padding: 4px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--glass-strong); box-shadow: var(--shadow); backdrop-filter: blur(24px); }
+    .popover button { display: block; width: 100%; padding: 6px 8px; border: 0; border-radius: 6px; background: transparent; text-align: left; color: var(--ink-2); font-size: 11px; }
+    .popover button:hover, .popover button[aria-current="true"] { background: var(--content-hover); color: var(--ink); }
+    .scope-popover { left: 9px; right: auto; min-width: 206px; }
+    .menu-popover { right: 9px; }
+    .list { flex: 1; min-height: 0; overflow: auto; padding: 5px 6px 48px; }
+    .list::-webkit-scrollbar { width: 5px; }
+    .list::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+    .row { position: relative; min-height: 36px; display: grid; grid-template-columns: 25px 16px minmax(0, 1fr) 24px; align-items: center; gap: 3px; padding: 2px 3px; border-radius: 8px; }
+    .row:hover, .row:focus-within { background: var(--content); }
+    .check { display: inline-grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 1.5px solid var(--ink-3); border-radius: 50%; background: transparent; color: white; font-size: 12px; line-height: 1; }
+    .check:hover { border-color: var(--ink-2); background: var(--content-hover); }
+    .check.done { border-color: var(--success); background: var(--success); }
+    .check.done::before { content: "✓"; }
+    .project-mark { position: relative; display: inline-grid; place-items: center; width: 14px; height: 22px; border-radius: 0; background: transparent; color: var(--ink-2); font-size: 11px; font-weight: 750; line-height: 1; }
+    .project-mark.rescoop { color: var(--project-rescoop); }
+    .project-mark.wiki { color: var(--project-wiki); }
+    .project-mark.anniv { color: var(--project-anniv); }
+    .project-mark.personal { color: var(--project-personal); }
+    .project-mark::after { content: attr(data-tooltip); position: absolute; z-index: 20; top: 27px; left: -10px; width: max-content; max-width: 210px; padding: 5px 7px; border-radius: 6px; background: var(--glass-strong); box-shadow: 0 3px 10px rgba(0, 0, 0, .14); color: var(--ink); font-size: 10px; font-weight: 450; line-height: 1.35; white-space: normal; opacity: 0; pointer-events: none; transform: translateY(-2px); transition: opacity 100ms ease, transform 100ms ease; }
+    .project-mark:hover::after, .project-mark:focus-visible::after { opacity: 1; transform: translateY(0); }
+    .row:nth-last-child(-n+2) .project-mark::after { top: auto; bottom: 27px; }
+    .row-title { min-width: 0; overflow: hidden; padding: 0; border: 0; background: transparent; color: var(--ink); text-overflow: ellipsis; white-space: nowrap; font-size: 12px; text-align: left; }
+    .row-title:hover { text-decoration: underline; text-decoration-color: var(--ink-3); text-underline-offset: 2px; }
+    .row.done-row .row-title { color: var(--ink-3); text-decoration: line-through; }
+    .row-action { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--ink-2); font-size: 15px; }
+    .row-action:hover { background: var(--content-hover); color: var(--ink); }
+    .row-action.in-progress { display: inline-flex; align-items: center; justify-content: center; gap: 1px; color: var(--ink); }
+    .progress-dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; animation: progress-dot 2400ms ease-in-out infinite; }
+    .progress-dot:nth-child(2) { animation-delay: 110ms; }
+    .progress-dot:nth-child(3) { animation-delay: 220ms; }
+    @keyframes progress-dot { 0%, 5%, 19%, 100% { transform: translateY(0); } 12% { transform: translateY(-3px); } }
+    .row-action[aria-label="시작"] { opacity: 0; }
+    .row:hover .row-action[aria-label="시작"], .row:focus-within .row-action[aria-label="시작"] { opacity: 1; }
+    .row:focus-within .row-action[aria-label="시작"] { opacity: 1; }
+    .add-dock { position: absolute; z-index: 8; right: 8px; bottom: 8px; left: 8px; display: flex; justify-content: flex-end; pointer-events: none; }
+    .add-trigger { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: var(--glass-strong); box-shadow: 0 3px 12px rgba(0, 0, 0, .14); color: var(--ink); font-size: 18px; line-height: 1; pointer-events: auto; }
+    .add-trigger[hidden] { display: none; }
+    .add-trigger:hover { background: var(--content-hover); }
+    .add-composer { width: 100%; padding: 7px 8px 8px; border-radius: 13px; background: var(--glass-strong); box-shadow: 0 5px 18px rgba(0, 0, 0, .16); backdrop-filter: blur(24px) saturate(120%); -webkit-backdrop-filter: blur(24px) saturate(120%); pointer-events: auto; }
+    .add-composer[hidden] { display: none; }
+    .composer-scope { display: block; max-width: 100%; margin: 0 0 2px; padding: 2px 20px 2px 3px; border: 0; outline: 0; background: transparent; color: var(--ink-2); font-size: 10px; font-weight: 600; }
+    .composer-scope:focus-visible, .composer-row textarea:focus-visible { outline: 2px solid var(--system-accent); outline-offset: 0; border-radius: 6px; }
+    .composer-row { display: flex; align-items: flex-end; gap: 6px; }
+    .composer-row textarea { flex: 1; min-width: 0; min-height: 34px; max-height: 74px; resize: none; padding: 7px 3px 5px; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 12px; line-height: 1.35; }
+    .composer-row textarea::placeholder { color: var(--ink-3); }
+    .composer-submit { display: inline-grid; place-items: center; flex: 0 0 auto; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--system-accent); color: white; font-size: 15px; line-height: 1; }
+    .composer-submit:disabled { background: var(--content-hover); color: var(--ink-3); cursor: default; }
+
+    .detail { display: none; height: 100%; flex-direction: column; }
+    .detail.active { display: flex; }
+    .detail-top { min-height: 40px; padding: 8px 10px; }
+    .back { display: inline-flex; align-items: center; gap: 4px; border: 0; background: transparent; color: var(--ink-2); font-size: 11px; }
+    .back:hover { color: var(--ink); }
+    .detail-spacer { flex: 1; }
+    .detail-scroll { min-height: 0; flex: 1; overflow: auto; padding: 15px 16px 12px; }
+    .detail-project-name { margin: 0 30px 4px 0; color: var(--ink-2); font-size: 11px; font-weight: 550; }
+    .detail-title-line { display: flex; align-items: flex-start; gap: 8px; }
+    .detail-title { flex: 1; margin: 0; font-size: 16px; line-height: 1.25; letter-spacing: -.02em; }
+    .detail-status { margin-top: 2px; }
+    .detail-meta { display: flex; align-items: center; gap: 6px; margin: 8px 0 18px; color: var(--ink-2); font-size: 11px; }
+    .detail h3 { margin: 15px 0 6px; font-size: 11px; font-weight: 600; color: var(--ink-2); }
+    .step { display: flex; align-items: center; gap: 7px; min-height: 27px; color: var(--ink); font-size: 12px; }
+    .step .check { width: 17px; height: 17px; font-size: 9px; }
+    .step.done { color: var(--ink-3); text-decoration: line-through; }
+    .add-step { margin-top: 4px; padding: 3px 0; border: 0; background: transparent; color: var(--ink-2); font-size: 11px; }
+    .add-step:hover { color: var(--ink); }
+    .note { color: var(--ink-2); font-size: 11px; }
+    .note + .note { margin-top: 8px; }
+    .detail-bottom { display: flex; justify-content: flex-end; padding: 8px 14px; color: var(--ink-3); font-size: 10px; }
+    .detail-bottom button { padding: 0; border: 0; background: transparent; color: var(--ink-2); font-size: 10px; }
+    .detail-bottom button:hover { color: var(--ink); }
+
+    .empty-state, .offline-state, .settings-state { display: none; height: 100%; flex-direction: column; }
+    .empty-state.active, .offline-state.active, .settings-state.active { display: flex; }
+    .state-content { display: grid; place-items: center; flex: 1; padding: 30px; text-align: center; }
+    .state-content strong { display: block; margin-bottom: 5px; font-size: 14px; }
+    .state-content p { margin: 0 0 13px; color: var(--ink-2); font-size: 11px; }
+    .settings-list { display: grid; gap: 2px; min-height: 0; padding: 12px; overflow: auto; }
+    .settings-card { padding: 9px 4px; }
+    .settings-card strong { display: block; margin-bottom: 2px; font-size: 12px; }
+    .settings-card span { color: var(--ink-2); font-size: 10px; }
+    .pet-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 10px; margin: 9px 0 7px; }
+    .pet-slot b { display: block; margin-bottom: 1px; color: var(--ink); font-size: 10px; font-weight: 600; }
+    .pet-guide-action { padding: 2px 0; border: 0; background: transparent; color: var(--ink-2); font-size: 10px; }
+    .pet-guide-action:hover { color: var(--ink); }
+
+    .pet { position: relative; width: 208px; height: 160px; margin-right: -61px; margin-top: 8px; border-radius: 12px; cursor: pointer; filter: drop-shadow(0 9px 12px rgba(30, 30, 32, .18)); }
+    .pet-image { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; user-select: none; -webkit-user-drag: none; }
+    .pet-only .pet { margin-top: 0; }
+
+    .toast { position: absolute; left: 25px; bottom: 20px; max-width: 270px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--glass-strong); box-shadow: var(--shadow); color: var(--ink-2); font-size: 11px; opacity: 0; transform: translateY(5px); pointer-events: none; transition: opacity 140ms ease, transform 140ms ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 850px) { .prototype { grid-template-columns: 190px minmax(460px, 1fr); } .pet-stack { right: 64px; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      .progress-dot { animation: none !important; transform: none !important; }
+      .pet-image { animation: none !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="prototype">
+    <aside class="guide" aria-label="Wireframe scenarios">
+      <p class="wordmark">Cofoco</p>
+
+      <h2>SCENARIOS</h2>
+      <div class="scenario-list">
+        <button class="scenario active" data-scenario="list">Main Todo bubble</button>
+        <button class="scenario" data-scenario="detail">Todo detail</button>
+        <button class="scenario" data-scenario="proposal">Change / proposal bubble</button>
+        <button class="scenario" data-scenario="empty">Empty scope</button>
+        <button class="scenario" data-scenario="offline">Service unavailable</button>
+        <button class="scenario" data-scenario="settings">Settings</button>
+        <button class="scenario" data-scenario="pet">Pet only</button>
+      </div>
+
+      <h2>APPEARANCE</h2>
+      <button class="theme-toggle" id="themeToggle" type="button">◐ <span>Dark appearance</span></button>
+
+      <h2>PET MOTION</h2>
+      <div class="pet-preview-list" role="group" aria-label="펫 모션 미리보기">
+        <button class="pet-preview-button" type="button" data-pet-preview="idle">서기</button>
+        <button class="pet-preview-button" type="button" data-pet-preview="noticed">팔 돌리기</button>
+        <button class="pet-preview-button" type="button" data-pet-preview="working">춤추기</button>
+        <button class="pet-preview-button" type="button" data-pet-preview="resting">눕기</button>
+      </div>
+    </aside>
+
+    <section class="desktop" aria-label="Cofoco desktop preview">
+      <div class="menu-bar"><div class="menu-left"><strong></strong><span>Cofoco</span><span>File</span><span>Window</span></div><div class="menu-right"><span>Tue Sep 8</span><span>Cofoco ▾</span></div></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      <div class="pet-stack" id="petStack">
+        <div class="change-stack" id="changeStack" aria-live="polite"></div>
+
+        <div class="bubble" id="bubble">
+          <section class="bubble-body active" id="listView" aria-label="Todo list">
+            <header class="bubble-top">
+              <button class="scope-button" id="scopeButton" type="button" aria-label="Todo 필터: 전체" aria-haspopup="true" aria-expanded="false"><span id="scopeLabel">Todo</span><span class="scope-chevron" aria-hidden="true">⌄</span></button>
+              <button class="icon-button" id="menuButton" type="button" aria-label="버블 메뉴" aria-haspopup="true" aria-expanded="false">•••</button>
+              <div class="popover menu-popover" id="menuPopover" hidden>
+                <button type="button" data-menu="settings">설정</button>
+                <button type="button" data-menu="completed">완료한 일</button>
+                <button type="button" data-menu="pet">버블 숨기기</button>
+              </div>
+              <div class="popover scope-popover" id="scopePopover" hidden>
+                <button type="button" data-scope="all" aria-current="true">Todo · 전체</button>
+                <button type="button" data-scope="personal">내 할 일</button>
+                <button type="button" data-scope="rescoop">Rescoop server + FE</button>
+                <button type="button" data-scope="wiki">사내 위키</button>
+                <button type="button" data-scope="anniv">2주년</button>
+              </div>
+            </header>
+            <div class="list" id="todoList"></div>
+            <div class="add-dock" id="addDock">
+              <button class="add-trigger" id="addTrigger" type="button" aria-label="할 일 추가" aria-expanded="false">＋</button>
+              <div class="add-composer" id="addComposer" hidden>
+                <label class="sr-only" for="addScope">프로젝트</label>
+                <select class="composer-scope" id="addScope" aria-label="추가할 프로젝트">
+                  <option value="personal" selected>Personal</option>
+                  <option value="rescoop">Rescoop server + FE</option>
+                  <option value="wiki">사내 위키</option>
+                  <option value="anniv">2주년</option>
+                </select>
+                <div class="composer-row">
+                  <label class="sr-only" for="quickInput">새 할 일</label>
+                  <textarea id="quickInput" rows="1" placeholder="할 일을 자연어로 적기…" autocomplete="off"></textarea>
+                  <button class="composer-submit" id="addButton" type="button" aria-label="할 일 추가" disabled>↑</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail" id="detailView" aria-label="Todo detail">
+            <header class="detail-top"><button class="back" id="backButton" type="button">‹ 목록</button><span class="detail-spacer"></span><button class="icon-button" type="button" aria-label="Todo 메뉴">•••</button></header>
+            <div class="detail-scroll">
+              <div class="detail-project-name" id="detailProject">Rescoop server + FE</div>
+              <div class="detail-title-line"><h1 class="detail-title" id="detailTitle">rescoop-server last_inbound_at 컬럼 신설 및 기준 변경</h1><button class="check detail-status" id="detailCheck" type="button" aria-label="상태 변경"></button></div>
+              <div class="detail-meta"><span id="detailStatus">안 함</span></div>
+              <h3>STEPS <span class="meta">2/3</span></h3>
+              <div class="step"><button class="check done" type="button" aria-label="완료된 단계"></button><span>last_inbound_at 필드와 migration 정의</span></div>
+              <div class="step"><button class="check done" type="button" aria-label="완료된 단계"></button><span>수신 기준 변경 지점 목록화</span></div>
+              <div class="step"><button class="check" type="button" aria-label="단계 완료 처리"></button><span>테스트 케이스와 롤백 메모 추가</span></div>
+              <button class="add-step" type="button" id="addStep">＋ 단계 추가</button>
+              <h3>NOTES</h3>
+              <div class="note">에이전트가 제안한 변경은 제목/상태를 건드리지 않고 이 Todo의 맥락에만 남겨둔다.</div>
+              <div class="note">오늘 오전 세션에서 기준 컬럼을 먼저 확인하기.</div>
+              <h3>HISTORY</h3>
+              <div class="meta">Sep 8 · 생성됨 · Codex CLI<br>Sep 8 · Step 2개 추가 · 사용자</div>
+            </div>
+            <footer class="detail-bottom"><button type="button" id="historyButton">전체 기록 보기</button></footer>
+          </section>
+
+          <section class="empty-state" id="emptyView" aria-label="Empty scope"><header class="bubble-top"><span class="bubble-title">내 할 일</span><button class="icon-button" type="button" aria-label="버블 메뉴">•••</button></header><div class="state-content"><div><strong>아직 할 일이 없어요</strong><p>이 버블에서 바로 하나 적어볼까요?</p><button class="button primary" type="button" id="emptyAdd">＋ 할 일 추가</button></div></div></section>
+          <section class="offline-state" id="offlineView" aria-label="Service unavailable"><header class="bubble-top"><span class="bubble-title">Cofoco</span><span class="meta">연결 안 됨</span></header><div class="state-content"><div><strong>저장소에 연결할 수 없어요</strong><p>아직 변경을 저장하지 않았습니다.<br>Cofoco를 다시 열어 재시도하세요.</p><button class="button" type="button" id="retryButton">다시 시도</button></div></div></section>
+          <section class="settings-state" id="settingsView" aria-label="Settings"><header class="detail-top"><button class="back" id="settingsBack" type="button">‹ 목록</button><span class="bubble-title">Settings</span></header><div class="settings-list"><div class="settings-card"><strong>Projects</strong><span>Rescoop server + FE · 2 folders</span></div><div class="settings-card"><strong>Integrations</strong><span>Codex CLI · Personal access off</span></div><div class="settings-card"><strong>Custom pet</strong><span>투명 PNG/WebP · 같은 캔버스와 기준선</span><div class="pet-slots"><span class="pet-slot"><b>서기 · 2장</b>눈 뜸 / 중립적으로 눈 감기</span><span class="pet-slot"><b>알림 · 팔 돌리기 3장</b>짧은 팔 교차 / 고개 앞·뒤·앞</span><span class="pet-slot"><b>진행 · 춤추기 3장</b>A 중립 / 같은 왼손을 뻗은 B·C 몸통 쏠림</span><span class="pet-slot"><b>눕기 · 2장</b>내쉬기 / 몸통이 살짝 들리는 들이쉬기</span></div><button class="pet-guide-action" id="copyPetPrompt" type="button">프롬프트 복사</button></div><div class="settings-card"><strong>Appearance</strong><span>Follow system · Reduce motion respected</span></div><div class="settings-card"><strong>Notifications</strong><span>Change bubbles on · OS notification optional</span></div></div></section>
+        </div>
+
+        <div class="pet" id="pet" role="button" tabindex="0" aria-label="우사기 펫, Todo 버블 열기" data-pose="noticed"><img class="pet-image" id="petImage" src="assets/usagi-smooth-noticed-1.png" alt="" draggable="false"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const todos = [
+        { id: 'rs-last', title: 'rescoop-server last_inbound_at 컬럼 신설 및 기준 변경', scope: 'rescoop', mark: 'R', tone: 'rescoop', status: 'open' },
+        { id: 'rs-backlog', title: 'rescoop server, rescoop fe 백로그 형식 수정', scope: 'rescoop', mark: 'R', tone: 'rescoop', status: 'in_progress' },
+        { id: 'wiki-hook', title: '사내 wiki 훅 및 스킬 설계', scope: 'wiki', mark: 'W', tone: 'wiki', status: 'open' },
+        { id: 'anniv-web', title: '2주년 웹페이지 사진선정 및 이벤트 추출', scope: 'anniv', mark: '2', tone: 'anniv', status: 'open' },
+        { id: 'vitamin', title: '영양제 사기', scope: 'personal', mark: 'P', tone: 'personal', status: 'open' },
+        { id: 'flowers', title: '2주년 꽃 사기', scope: 'personal', mark: 'P', tone: 'personal', status: 'done' }
+      ];
+      const changes = [
+        { kind: 'proposal', title: 'Todo 제목 변경 제안', body: '', diff: ['현재  rescoop server, rescoop fe 백로그 형식 수정', '제안  rescoop 백로그 형식 통합 및 수정'] },
+        { kind: 'receipt', title: '새 Step 1개가 추가됐어요', body: '사내 wiki 훅 및 스킬 설계 · Claude Code', diff: null },
+        { kind: 'receipt', title: '영양제 사기가 완료됐어요', body: '사용자 · 방금 전', diff: null }
+      ];
+      const petPoses = {
+        idle: ['assets/usagi-smooth-idle-1.png', 'assets/usagi-smooth-idle-2.png'],
+        working: ['assets/usagi-smooth-working-1.png', 'assets/usagi-smooth-working-2.png', 'assets/usagi-smooth-working-3.png'],
+        noticed: ['assets/usagi-smooth-noticed-1.png', 'assets/usagi-smooth-noticed-2.png', 'assets/usagi-smooth-noticed-3.png'],
+        resting: ['assets/usagi-smooth-resting-1.png', 'assets/usagi-smooth-resting-2.png']
+      };
+      Object.values(petPoses).flat().forEach((src) => { const image = new Image(); image.src = src; });
+      const petMotionPlans = {
+        idle: { loopMs: 6000, events: [[0, 0], [450, 1], [1150, 0]] },
+        noticed: {
+          loopMs: 9120,
+          events: [[0, 0]].concat(Array.from({ length: 4 }, (_, loop) => [[loop * 1280 + 320, 1], [loop * 1280 + 640, 2], [loop * 1280 + 960, 1], [loop * 1280 + 1280, 0]]).flat())
+        },
+        resting: { loopMs: 6000, events: [[0, 0], [450, 1], [1150, 0]] },
+        working: {
+          loopMs: 6560,
+          events: [[0, 0]].concat(Array.from({ length: 4 }, (_, loop) => [[loop * 640 + 160, 1], [loop * 640 + 320, 0], [loop * 640 + 480, 2], [loop * 640 + 640, 0]]).flat())
+        }
+      };
+      const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const state = { theme: 'light', view: 'list', scenario: 'list', scope: 'all', changeIndex: 0, changesVisible: true, petOnly: false, petPreview: null };
+      let activePetPose = null;
+      let petTimers = [];
+      const $ = (id) => document.getElementById(id);
+      const bubble = $('bubble');
+      const listView = $('listView');
+      const detailView = $('detailView');
+      const emptyView = $('emptyView');
+      const offlineView = $('offlineView');
+      const settingsView = $('settingsView');
+      const toast = $('toast');
+
+      function scopeName(scope) { return ({ all: 'Todo', personal: '내 할 일', rescoop: 'Rescoop', wiki: '사내 위키', anniv: '2주년' })[scope] || 'Todo'; }
+      function scopeTooltip(scope) { return ({ personal: 'Personal', rescoop: 'Rescoop server + FE', wiki: '사내 위키', anniv: '2주년' })[scope] || scopeName(scope); }
+      function filteredTodos() { return todos.filter((todo) => state.scope === 'all' || todo.scope === state.scope).filter((todo) => todo.status !== 'done'); }
+      function stopPetLoop() { petTimers.forEach((timer) => window.clearTimeout(timer)); petTimers = []; }
+      function startPetLoop(pose) {
+        stopPetLoop(); activePetPose = pose; $('pet').dataset.pose = pose; $('petImage').src = petPoses[pose][0];
+        if (motionQuery.matches || petPoses[pose].length < 2) return;
+        const plan = petMotionPlans[pose];
+        const cycle = () => {
+          petTimers = [];
+          plan.events.forEach(([at, frame]) => {
+            if (at === 0) $('petImage').src = petPoses[pose][frame];
+            else petTimers.push(window.setTimeout(() => { $('petImage').src = petPoses[pose][frame]; }, at));
+          });
+          petTimers.push(window.setTimeout(cycle, plan.loopMs));
+        };
+        cycle();
+      }
+      function syncPetPose() {
+        let pose = 'idle';
+        if (state.view === 'pet') pose = 'resting';
+        else if (state.changesVisible) pose = 'noticed';
+        else if (state.view === 'detail' || (state.view === 'list' && filteredTodos().some((todo) => todo.status === 'in_progress'))) pose = 'working';
+        pose = state.petPreview || pose;
+        if (pose !== activePetPose) startPetLoop(pose);
+      }
+      function renderList() {
+        $('scopeLabel').textContent = scopeName(state.scope);
+        $('scopeButton').setAttribute('aria-label', `Todo 필터: ${state.scope === 'all' ? '전체' : scopeName(state.scope)}`);
+        const rows = filteredTodos();
+        $('todoList').innerHTML = rows.length ? rows.map((todo) => `
+          <div class="row ${todo.status === 'done' ? 'done-row' : ''}" data-id="${todo.id}">
+            <button class="check ${todo.status === 'done' ? 'done' : ''}" data-action="status" type="button" aria-label="${todo.status === 'in_progress' ? '하는 중, 상태 변경' : '안 함, 완료 처리'}"></button>
+            <span class="project-mark ${todo.tone}" tabindex="0" aria-label="${scopeTooltip(todo.scope)}" data-tooltip="${scopeTooltip(todo.scope)}">${todo.mark}</span>
+            <button class="row-title" data-action="detail" type="button" title="${todo.title}">${todo.title}</button>
+            <button class="row-action ${todo.status === 'in_progress' ? 'in-progress' : ''}" data-action="advance" type="button" aria-label="${todo.status === 'in_progress' ? '하는 중, 안 함으로 변경' : '시작'}">${todo.status === 'in_progress' ? '<span class="progress-dot" aria-hidden="true"></span><span class="progress-dot" aria-hidden="true"></span><span class="progress-dot" aria-hidden="true"></span>' : '<span aria-hidden="true">▶</span>'}</button>
+          </div>`).join('') : '<div class="state-content"><strong>열린 일이 없어요</strong></div>';
+      }
+      function openComposer() {
+        $('addScope').value = 'personal';
+        $('addComposer').hidden = false;
+        $('addTrigger').hidden = true;
+        $('addTrigger').setAttribute('aria-expanded', 'true');
+        $('quickInput').focus();
+      }
+      function closeComposer() {
+        $('addComposer').hidden = true;
+        $('addTrigger').hidden = false;
+        $('addTrigger').setAttribute('aria-expanded', 'false');
+      }
+      function setView(view) {
+        state.view = view;
+        [listView, detailView, emptyView, offlineView, settingsView].forEach((node) => node.classList.remove('active'));
+        if (view === 'list') listView.classList.add('active');
+        if (view === 'detail') detailView.classList.add('active');
+        if (view === 'empty') emptyView.classList.add('active');
+        if (view === 'offline') offlineView.classList.add('active');
+        if (view === 'settings') settingsView.classList.add('active');
+        bubble.classList.toggle('hidden', view === 'pet');
+        $('petStack').classList.toggle('pet-only', view === 'pet');
+        if (view !== 'pet') renderList();
+        syncPetPose();
+      }
+      function showToast(message) { toast.textContent = message; toast.classList.add('show'); window.clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 2200); }
+      function openDetail(id) {
+        const todo = todos.find((item) => item.id === id) || todos[0];
+        $('detailTitle').textContent = todo.title; $('detailProject').textContent = scopeTooltip(todo.scope); $('detailStatus').textContent = todo.status === 'in_progress' ? '하는 중' : todo.status === 'done' ? '완료' : '안 함';
+        $('detailCheck').className = `check detail-status ${todo.status === 'done' ? 'done' : ''}`; $('detailCheck').dataset.id = todo.id;
+        setView('detail');
+      }
+      function renderChange() {
+        const stack = $('changeStack');
+        if (!state.changesVisible) { stack.innerHTML = ''; return; }
+        const change = changes[state.changeIndex];
+        stack.innerHTML = `<article class="change-bubble" aria-label="변경 알림">
+          <div class="change-top"><span class="change-kicker">${change.kind === 'proposal' ? '검토가 필요한 변경' : 'Cofoco 변경'}</span><span class="change-count">${state.changeIndex + 1} / ${changes.length}</span></div>
+          <p class="change-title">${change.title}</p>${change.body ? `<p class="change-body">${change.body}</p>` : ''}
+          ${change.diff ? `<div class="change-diff"><s>${change.diff[0]}</s><span>${change.diff[1]}</span></div>` : ''}
+          <div class="change-actions">${change.kind === 'proposal' ? '<button class="button" data-change="reject" type="button">거절</button><button class="button primary" data-change="accept" type="button">검토 후 적용</button>' : '<button class="button" data-change="dismiss" type="button">확인</button>'}</div>
+        </article>`;
+      }
+      function setScenario(name) {
+        document.querySelectorAll('.scenario').forEach((button) => button.classList.toggle('active', button.dataset.scenario === name));
+        state.petPreview = null;
+        document.querySelectorAll('[data-pet-preview]').forEach((button) => button.classList.remove('active'));
+        state.scenario = name;
+        state.petOnly = name === 'pet'; state.changesVisible = name === 'proposal' || name === 'list' || name === 'detail';
+        setView(name === 'proposal' ? 'list' : name);
+        if (name === 'proposal') state.changeIndex = 0;
+        renderChange(); syncPetPose();
+      }
+
+      $('todoList').addEventListener('click', (event) => {
+        const action = event.target.closest('[data-action]'); const row = event.target.closest('.row');
+        if (!action || !row) return;
+        const todo = todos.find((item) => item.id === row.dataset.id); if (!todo) return;
+        if (action.dataset.action === 'detail') { openDetail(todo.id); return; }
+        if (action.dataset.action === 'status') { todo.status = todo.status === 'done' ? 'open' : 'done'; showToast(todo.status === 'done' ? '완료로 표시했어요.' : '다시 열린 Todo예요.'); renderList(); syncPetPose(); return; }
+        if (action.dataset.action === 'advance') { todo.status = todo.status === 'in_progress' ? 'open' : 'in_progress'; showToast(todo.status === 'in_progress' ? '하는 중으로 표시했어요.' : '안 함으로 되돌렸어요.'); renderList(); syncPetPose(); }
+      });
+      $('detailCheck').addEventListener('click', () => { const todo = todos.find((item) => item.id === $('detailCheck').dataset.id); if (!todo) return; todo.status = todo.status === 'done' ? 'open' : 'done'; openDetail(todo.id); showToast(todo.status === 'done' ? '완료로 표시했어요.' : '다시 열린 Todo예요.'); });
+      $('backButton').addEventListener('click', () => setView('list'));
+      $('settingsBack').addEventListener('click', () => setView('list'));
+      $('scopeButton').addEventListener('click', () => { const node = $('scopePopover'); node.hidden = !node.hidden; $('scopeButton').setAttribute('aria-expanded', String(!node.hidden)); });
+      $('menuButton').addEventListener('click', () => { const node = $('menuPopover'); node.hidden = !node.hidden; $('menuButton').setAttribute('aria-expanded', String(!node.hidden)); });
+      document.querySelectorAll('[data-scope]').forEach((button) => button.addEventListener('click', () => { state.scope = button.dataset.scope; document.querySelectorAll('[data-scope]').forEach((item) => item.setAttribute('aria-current', String(item === button))); $('scopePopover').hidden = true; $('scopeButton').setAttribute('aria-expanded', 'false'); setView('list'); }));
+      document.querySelectorAll('[data-menu]').forEach((button) => button.addEventListener('click', () => { $('menuPopover').hidden = true; $('menuButton').setAttribute('aria-expanded', 'false'); if (button.dataset.menu === 'settings') setView('settings'); if (button.dataset.menu === 'pet') setView('pet'); if (button.dataset.menu === 'completed') showToast('완료한 Todo는 이 wireframe의 상세 메뉴에서 확인합니다.'); }));
+      $('changeStack').addEventListener('click', (event) => { const button = event.target.closest('[data-change]'); if (!button) return; const action = button.dataset.change; showToast(action === 'accept' ? '변경 제안을 적용했어요.' : action === 'reject' ? '변경 제안을 거절했어요.' : '변경을 확인했어요.'); if (state.changeIndex < changes.length - 1) state.changeIndex += 1; else state.changesVisible = false; renderChange(); syncPetPose(); });
+      $('addTrigger').addEventListener('click', openComposer);
+      $('addButton').addEventListener('click', () => { const input = $('quickInput'); const title = input.value.trim(); if (!title) { input.focus(); return; } const targetScope = $('addScope').value; todos.push({ id: `new-${Date.now()}`, title, scope: targetScope, mark: ({ personal: 'P', rescoop: 'R', wiki: 'W', anniv: '2' })[targetScope], tone: targetScope, status: 'open' }); input.value = ''; $('addButton').disabled = true; closeComposer(); renderList(); showToast(`새 Todo를 ${scopeTooltip(targetScope)}에 추가했어요.`); });
+      $('quickInput').addEventListener('input', () => { $('addButton').disabled = !$('quickInput').value.trim(); });
+      $('quickInput').addEventListener('keydown', (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); $('addButton').click(); } if (event.key === 'Escape') { event.preventDefault(); closeComposer(); $('addTrigger').focus(); } });
+      $('emptyAdd').addEventListener('click', () => { setView('list'); openComposer(); });
+      $('retryButton').addEventListener('click', () => { setView('list'); showToast('연결을 다시 시도합니다.'); });
+      $('historyButton').addEventListener('click', () => showToast('Todo history를 열었어요.'));
+      $('addStep').addEventListener('click', () => showToast('Step은 Todo 안에서만 조용히 추가됩니다.'));
+      $('themeToggle').addEventListener('click', () => { state.theme = state.theme === 'light' ? 'dark' : 'light'; document.documentElement.dataset.theme = state.theme; $('themeToggle').querySelector('span').textContent = state.theme === 'light' ? 'Dark appearance' : 'Light appearance'; });
+      document.querySelectorAll('[data-pet-preview]').forEach((button) => button.addEventListener('click', () => { state.petPreview = button.dataset.petPreview; document.querySelectorAll('[data-pet-preview]').forEach((item) => item.classList.toggle('active', item === button)); startPetLoop(state.petPreview); }));
+      motionQuery.addEventListener?.('change', () => startPetLoop(activePetPose || 'idle'));
+      $('copyPetPrompt').addEventListener('click', async () => { const prompt = '첨부한 캐릭터를 같은 외형과 선 스타일로 유지해 데스크톱 펫용 실제 투명 배경 PNG/WebP를 만들어주세요. 1) idle 서기 2장: 눈 뜸 / 웃는 눈이 아닌 중립적인 눈 감기, 2) noticed 알림용 팔 돌리기 3장: 매우 짧은 두 팔이 몸 앞에 붙어 서로 겹친 채 번갈아 위아래로 도는 자세. 1·3번은 고개가 조금 앞으로, 2번은 조금 뒤로 움직이며 1-2-3-2-1 순서로 이어져야 합니다, 3) working 진행용 춤추기 3장: A는 정면 중립 자세, B·C는 얼굴과 귀의 각도를 A와 같게 유지한 채 아래 몸통이 서로 반대 방향으로 쏠리고 캐릭터의 같은 왼손만 화면 오른쪽으로 뻗는 자세. A-B-A-C-A 순서로 재생할 수 있어야 합니다, 4) resting 눕기 2장: 내쉬기 / 몸통이 약간 들썩이는 들이쉬기. 모든 프레임은 같은 캔버스, 캐릭터 몸집, 얼굴 대 몸 비율, 기준선과 투명 알파를 유지하고 배경·체커보드·그림자·글자·말풍선·워터마크는 넣지 마세요.'; try { await navigator.clipboard.writeText(prompt); showToast('커스텀 펫 프롬프트를 복사했어요.'); } catch { showToast('브라우저에서 클립보드 사용을 허용해주세요.'); } });
+      document.querySelectorAll('.scenario').forEach((button) => button.addEventListener('click', () => setScenario(button.dataset.scenario)));
+      $('pet').addEventListener('click', () => { if (state.view === 'pet') setView('list'); else setView('pet'); });
+      $('pet').addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); $('pet').click(); } });
+      document.addEventListener('click', (event) => { if (!event.target.closest('#scopeButton, #scopePopover')) { $('scopePopover').hidden = true; $('scopeButton').setAttribute('aria-expanded', 'false'); } if (!event.target.closest('#menuButton, #menuPopover')) { $('menuPopover').hidden = true; $('menuButton').setAttribute('aria-expanded', 'false'); } });
+      renderList(); renderChange(); syncPetPose();
+    })();
+  </script>
+</body>
+</html>

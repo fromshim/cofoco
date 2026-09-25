@@ -1,0 +1,40 @@
+{
+  "frame": "idle-1",
+  "source": "raw/idle-1-v2-source.png",
+  "mask": "review/masks/idle-1.png",
+  "method": "macOS Vision VNGenerateForegroundInstanceMaskRequest, allInstances; generated scaled mask applied to alpha only",
+  "rgb_unchanged_before_normalization": true,
+  "source_size": [
+    1536,
+    1024
+  ],
+  "source_alpha_bbox": [
+    483,
+    116,
+    1047,
+    954
+  ],
+  "scale": 0.5071599045346062,
+  "size": [
+    768,
+    512
+  ],
+  "bbox": [
+    241,
+    45,
+    527,
+    470
+  ],
+  "center": [
+    384.0,
+    257.5
+  ],
+  "baseline": 469,
+  "margins": [
+    241,
+    45,
+    241,
+    42
+  ],
+  "sha256": "e9a10013b3393606c4957eef60d46de5eb4fcee387f902f2fc7f2862e3e9b654"
+}

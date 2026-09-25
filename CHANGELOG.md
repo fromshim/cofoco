@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-09-25 — Cofoco product name
+
+Renamed the active product identity from TodoCrew to Cofoco in the product contract, architecture, backlog, UI direction, design guidance, handoff, and wireframe wordmark. The local checkout and existing documentation/design asset paths are preserved. No feature code was implemented.
+
+- Set the planned app package/CLI identity to `cofoco` and the MCP tool prefix to `cofoco_`; the preserved Git-engine workspace metadata remains unchanged.
+- Recorded the name decision and preserved the earlier TodoCrew decision as historical context in [ADR 0003](docs/decisions/0003-product-name-cofoco.md).
+- User-supplied Usagi assets remain wireframe references only and are not approved as distributable Cofoco app artwork.
+
+See [product specification](docs/product-spec.md), [architecture](docs/architecture.md), and [V1 backlog](docs/vertical-slice-1.md). The rename changes no V1 behavior contract.
+
 ## 2026-09-07 — TodoCrew V1 contract
 
 Specification/package identity update; no TodoCrew feature implementation.

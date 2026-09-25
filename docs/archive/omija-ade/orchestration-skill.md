@@ -1,7 +1,7 @@
 # Archived Omija orchestration skill
 
-> Status: **Superseded** on 2026-09-04. Current direction: [TodoCrew product spec](../../product-spec.md).
-> Historical instructions, not an active skill. Do not execute this workflow for TodoCrew V1.
+> Status: **Superseded** on 2026-09-04. Current direction: [Cofoco product spec](../../product-spec.md).
+> Historical instructions, not an active skill. Do not execute this workflow for Cofoco V1.
 > Renamed from `skill/SKILL.md` so it is not presented as an installable current workflow.
 > Original snapshot: Git tag `omija-phase0` (commit `974ca87`).
 

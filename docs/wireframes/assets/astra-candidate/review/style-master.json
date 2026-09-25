@@ -1,0 +1,242 @@
+{
+  "authority": "../usagi-smooth-idle-1.png",
+  "outfit_color_only": "../usagi-smooth-working-1.png",
+  "sample_method": "Median RGB of 5x5 patches at listed original 768x512 coordinates; opaque interior samples.",
+  "samples": {
+    "body_forehead": {
+      "xy": [
+        380,
+        241
+      ],
+      "rgb": [
+        250,
+        238,
+        196
+      ]
+    },
+    "body_left_face": {
+      "xy": [
+        280,
+        278
+      ],
+      "rgb": [
+        251,
+        239,
+        198
+      ]
+    },
+    "body_right_face": {
+      "xy": [
+        490,
+        285
+      ],
+      "rgb": [
+        251,
+        239,
+        197
+      ]
+    },
+    "body_torso": {
+      "xy": [
+        386,
+        433
+      ],
+      "rgb": [
+        250,
+        239,
+        198
+      ]
+    },
+    "body_lower": {
+      "xy": [
+        390,
+        464
+      ],
+      "rgb": [
+        251,
+        239,
+        196
+      ]
+    },
+    "ear_left": {
+      "xy": [
+        368,
+        141
+      ],
+      "rgb": [
+        252,
+        191,
+        193
+      ]
+    },
+    "ear_right": {
+      "xy": [
+        419,
+        149
+      ],
+      "rgb": [
+        252,
+        192,
+        194
+      ]
+    },
+    "cheek_left": {
+      "xy": [
+        283,
+        324
+      ],
+      "rgb": [
+        252,
+        192,
+        194
+      ]
+    },
+    "cheek_right": {
+      "xy": [
+        446,
+        340
+      ],
+      "rgb": [
+        252,
+        191,
+        192
+      ]
+    },
+    "outline": {
+      "xy": [
+        245,
+        302
+      ],
+      "rgb": [
+        5,
+        0,
+        0
+      ]
+    },
+    "mouth_dark": {
+      "xy": [
+        360,
+        315
+      ],
+      "rgb": [
+        7,
+        0,
+        0
+      ]
+    },
+    "outfit": {
+      "xy": [
+        413,
+        437
+      ],
+      "rgb": [
+        252,
+        225,
+        123
+      ]
+    }
+  },
+  "palette_anchors_rgb": {
+    "body": [
+      250,
+      239,
+      197
+    ],
+    "inner_ear": [
+      252,
+      191,
+      193
+    ],
+    "cheek": [
+      252,
+      192,
+      194
+    ],
+    "outline_features": [
+      7,
+      1,
+      1
+    ],
+    "mouth_accent": "Identity has no open mouth accent; maintain same cheek pink when action requires tongue.",
+    "outfit": [
+      252,
+      225,
+      123
+    ]
+  },
+  "outer_stroke_px": {
+    "readings": [
+      10,
+      10,
+      9,
+      9,
+      10,
+      10,
+      8
+    ],
+    "median": 10,
+    "range": [
+      8,
+      10
+    ],
+    "scan_method": "Dark-core run along near-normal clean head, ear and torso scans; max RGB<95 and alpha>127. Multiple contours excluded. Antialiased outer fringe excluded.",
+    "scan_locations": [
+      "x=240..249 y=305 left head",
+      "x=518..527 y=309 right head",
+      "x=336..344 y=138 left ear",
+      "x=435..443 y=145 right ear",
+      "x=301..310 y=455 left torso",
+      "x=469..478 y=455 right torso",
+      "y=82..89 x=360 ear top"
+    ]
+  },
+  "facial_feature_stroke_px": {
+    "target_range": [
+      6,
+      8
+    ],
+    "method": "Visual estimate on eyebrows/mouth, to be audited with scan readings after normalization"
+  },
+  "rendering": {
+    "fill": "Almost flat pale fill with very weak soft modulation; five sampled body patches differ by only 1 R, 1 G, 2 B.",
+    "shading_direction": "No strong directional light; subtle warm lower/interior variation, preserve low contrast.",
+    "edges": "Smooth antialiased edges; source has faint irregular outside remnants to avoid in new clean output.",
+    "caps_joins": "Rounded caps and joins, organic smooth curves; no miter spikes.",
+    "outer_vs_features": "Outer contour 8\u201310px; curved facial lines slightly finer about 6\u20138px."
+  },
+  "geometry_reference_px": {
+    "alpha_bounds": [
+      240,
+      82,
+      528,
+      512
+    ],
+    "visible_height": 430,
+    "visible_width": 288,
+    "head_outer_width_approx": 284,
+    "ear_left_length_approx": 117,
+    "ear_right_length_approx": 110,
+    "eye_centers_approx": [
+      [
+        322,
+        289
+      ],
+      [
+        410,
+        296
+      ]
+    ],
+    "eye_spacing_approx": 88.3,
+    "cheek_centers_approx": [
+      [
+        282,
+        309
+      ],
+      [
+        445,
+        326
+      ]
+    ]
+  },
+  "previous_candidate_policy": "Pose geometry continuity only; never redefine palette, contrast, proportions or line weight."
+}

@@ -1,16 +1,17 @@
-# TodoCrew working agreements
+# Cofoco working agreements
 
 ## Current product
 
-- Product/wordmark: **TodoCrew**; package/future CLI: `todocrew`.
+- Product/wordmark: **Cofoco**; planned app package/future CLI: `cofoco`. The current root package remains the preserved Git-engine workspace.
 - A local-first todo companion shared by a user and their agents. Initial V1 delivery/validation is macOS, one OS user, one local store.
 - Desktop pet with a Todo speech bubble is the primary interface.
 - Personal and logical Projects are flat scopes. Projects bind zero or more folders; `All` is a view.
 - Todo is a coarse independent commitment; optional one-level Steps are internal milestones; Notes are context.
 - Todo status is exactly `open | in_progress | done`. Step checks do not complete the parent. Soft deletion/Trash are separate.
-- Row UI: checkbox + title, hover/focus `>` to start, `…` for in-progress. No live agent/needs-you/blocked states.
+- List header uses one `Todo ▾` scope control; a selected scope name replaces `Todo`. The main list has no internal separators or meta footer. At rest, capture is a circular `+`; it opens a borderless natural-language composer with a Project selector above and Personal selected by default. Row UI: checkbox + one-character project mark + title, hover/focus play action to start, animated `…` for in-progress. The animation communicates Todo status only and becomes static under Reduce Motion. The mark is colored text without a chip; hover/focus exposes only the Project name. Todo detail shows the full Project name above the title. Bound directories stay in Project settings. No live agent/needs-you/blocked states.
+- The wireframe may use user-supplied character references for flow review, but distributable defaults require confirmed rights or original art. V1 custom pets are local image imports, not an in-app generation service: idle is required; working (in-progress dance), noticed (alert-present alternating arm circle with a subtle head bob), and resting poses are optional fallbacks. Do not upload or moderate imported pet files through a Cofoco server.
 - Hybrid policy: agent capture/start/Step maintenance can be automatic; important existing Todo changes require owner approval in the app. Explicit user status choices remain protected after rereading.
-- No TodoCrew feature code exists yet. IDE/Git GUI, agent launch/supervision, automatic Git discovery, cloud/mobile/team features and other desktop OS releases are deferred.
+- No Cofoco feature code exists yet. IDE/Git GUI, agent launch/supervision, automatic Git discovery, cloud/mobile/team features and other desktop OS releases are deferred.
 
 ## Source of truth
 
@@ -20,7 +21,7 @@ Read in order:
 2. `docs/architecture.md` — ownership, revision, approval, permissions and interface contracts.
 3. `docs/vertical-slice-1.md` — current Todo/Step backlog and acceptance evidence.
 
-`docs/decisions/0002-todocrew-v1.md` records the latest decisions and chosen defaults. ADR 0001 records the historical pivot and former working name, not current behavior. User's newer explicit instructions take precedence; reconcile contradictions rather than silently restoring old ideas.
+`docs/decisions/0002-todocrew-v1.md` records the V1 behavior contract; [ADR 0003](docs/decisions/0003-product-name-cofoco.md) records the current product name. ADR 0001 records the historical pivot and former working name, not current behavior. User's newer explicit instructions take precedence; reconcile contradictions rather than silently restoring old ideas.
 
 ## Historical boundaries
 

@@ -1,0 +1,302 @@
+[
+  {
+    "file": "usagi-smooth-idle-1.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      240,
+      82,
+      528,
+      512
+    ],
+    "center": [
+      384.0,
+      297.0
+    ],
+    "baseline": 511,
+    "margins": [
+      240,
+      82,
+      240,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "44afa6785a24c9879dae04080b6c3f9e6328da77bdfff031a2bb01745afc472b"
+  },
+  {
+    "file": "usagi-smooth-idle-2.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      240,
+      82,
+      528,
+      512
+    ],
+    "center": [
+      384.0,
+      297.0
+    ],
+    "baseline": 511,
+    "margins": [
+      240,
+      82,
+      240,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "1e951ec6acef6b9ea93c1ed622b1c272a4fb412fcca418a7d5be282c8d3e1a22"
+  },
+  {
+    "file": "usagi-smooth-noticed-1.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      227,
+      82,
+      540,
+      512
+    ],
+    "center": [
+      383.5,
+      297.0
+    ],
+    "baseline": 511,
+    "margins": [
+      227,
+      82,
+      228,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "3b57eb0c0da9edb332f23a01dd8fb9ed39a43c9d78bdbf2e6cd6feeed02bd36c"
+  },
+  {
+    "file": "usagi-smooth-noticed-2.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      225,
+      82,
+      542,
+      512
+    ],
+    "center": [
+      383.5,
+      297.0
+    ],
+    "baseline": 511,
+    "margins": [
+      225,
+      82,
+      226,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "2ebd3dab3b5bf3efdb8175e76c76f4d65e1e892510a4803a7ea86c0c87df8638"
+  },
+  {
+    "file": "usagi-smooth-noticed-3.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      229,
+      82,
+      538,
+      512
+    ],
+    "center": [
+      383.5,
+      297.0
+    ],
+    "baseline": 511,
+    "margins": [
+      229,
+      82,
+      230,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "86d1868b8eec7ea7597b73ea1c43b860e331d44283fcb23945d38a90b89e166e"
+  },
+  {
+    "file": "usagi-smooth-resting-1.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      144,
+      249,
+      624,
+      512
+    ],
+    "center": [
+      384.0,
+      380.5
+    ],
+    "baseline": 511,
+    "margins": [
+      144,
+      249,
+      144,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "77e016507c23fe9752d13bde8ed12d170b9ee4b850d8c20146012184623ad90f"
+  },
+  {
+    "file": "usagi-smooth-resting-2.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      144,
+      238,
+      624,
+      512
+    ],
+    "center": [
+      384.0,
+      375.0
+    ],
+    "baseline": 511,
+    "margins": [
+      144,
+      238,
+      144,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "814888d28ae6625d5d737f9d42a150cf68e42029967a97188508417acc0fc69a"
+  },
+  {
+    "file": "usagi-smooth-working-1.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      246,
+      82,
+      521,
+      512
+    ],
+    "center": [
+      383.5,
+      297.0
+    ],
+    "baseline": 511,
+    "margins": [
+      246,
+      82,
+      247,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "f16dfdb9d9f5238d775d41f6d78a9d540eb79061e1f9b310d54b216bf303918e"
+  },
+  {
+    "file": "usagi-smooth-working-2.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      240,
+      84,
+      572,
+      512
+    ],
+    "center": [
+      406.0,
+      298.0
+    ],
+    "baseline": 511,
+    "margins": [
+      240,
+      84,
+      196,
+      0
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "8a0e9c13334494ba3fce637f51f66ac671b9319d127e95980f46a09dcd67e3d0"
+  },
+  {
+    "file": "usagi-smooth-working-3.png",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bbox": [
+      233,
+      77,
+      576,
+      507
+    ],
+    "center": [
+      404.5,
+      292.0
+    ],
+    "baseline": 506,
+    "margins": [
+      233,
+      77,
+      192,
+      5
+    ],
+    "alpha": [
+      0,
+      255
+    ],
+    "sha256": "ef5d6844e8792edddf14ee6aeebdf1f1932ec1e4e409076417a62838e9ed7bcc"
+  }
+]

@@ -1,8 +1,8 @@
-# TodoCrew
+# Cofoco
 
 **Todos shared by you and your agents.**
 
-TodoCrew (`todocrew` package/future CLI) is a local-first desktop todo companion. A pet keeps coarse commitments visible in a speech bubble while you switch between personal work, projects and agent sessions.
+Cofoco (planned app package/future CLI: `cofoco`) is a local-first desktop todo companion. A pet keeps coarse commitments visible in a speech bubble while you switch between personal work, projects and agent sessions.
 
 The list has three states: **안 함 → 하는 중 → 완료**. Optional one-level **Steps** hold milestones; **Notes** hold context. Personal and logical projects are flat scopes with optional folder bindings. All is a view.
 
@@ -10,16 +10,18 @@ Connected agents can capture agreed Todos, start work and maintain Steps. Import
 
 ## Current status
 
-**V1 specification is finalized; TodoCrew features are not implemented.** There is no todo database, daemon, MCP server, new CLI or pet UI yet. Initial delivery/validation targets one Mac with local Claude Code and Codex CLI.
+**V1 specification is finalized; Cofoco features are not implemented.** There is no todo database, daemon, MCP server, new CLI or pet UI yet. Initial delivery/validation targets one Mac with local Claude Code and Codex CLI.
 
-The only executable code is the preserved [Omija Git engine](packages/git-engine/README.md). Its 26 tests do not validate TodoCrew features.
+The only executable code is the preserved [Omija Git engine](packages/git-engine/README.md). Its 26 tests do not validate Cofoco features.
 
 ## Start here
 
 - [Product specification](docs/product-spec.md): Todo/Step/Note, scopes, states, approval policy and UI behavior.
 - [Architecture](docs/architecture.md): service ownership, revision/events, proposals, permissions and MCP contract.
 - [V1 backlog and acceptance](docs/vertical-slice-1.md): coarse development Todos, Steps and acceptance evidence.
-- [V1 reconciliation decision](docs/decisions/0002-todocrew-v1.md): conflicts resolved, user decisions and design defaults.
+- [UI direction and interactive wireframe](docs/ui-direction.md): current review candidate for the pet, bubble, details and approval flow.
+- [V1 behavior contract](docs/decisions/0002-todocrew-v1.md): user decisions and design defaults.
+- [Product name decision](docs/decisions/0003-product-name-cofoco.md): Cofoco wordmark, future CLI identity, and preserved paths.
 - [Current handoff](docs/handoffs/omija-to-todocrew.md): concise context for continuing sessions.
 - [Changelog](CHANGELOG.md).
 
@@ -35,10 +37,10 @@ pnpm test
 pnpm typecheck
 ```
 
-These commands only cover `packages/git-engine`. There is no root `bin` entry until the actual TodoCrew CLI exists.
+These commands only cover `packages/git-engine`. There is no root `bin` entry until the actual Cofoco CLI exists.
 
 The local checkout remains `omija`; saved projects, other sessions and external installations are not implicitly renamed.
 
 ## Original Omija
 
-Git tag `omija-phase0` at commit `974ca87` preserves the original implementation. [Historical ADE docs and inactive skill](docs/archive/omija-ade/README.md) are not the current roadmap. [ADR 0001](docs/decisions/0001-pivot-omija-to-agentodo.md) records the earlier AgenTODO working name; [ADR 0002](docs/decisions/0002-todocrew-v1.md) establishes the current contract.
+Git tag `omija-phase0` at commit `974ca87` preserves the original implementation. [Historical ADE docs and inactive skill](docs/archive/omija-ade/README.md) are not the current roadmap. [ADR 0001](docs/decisions/0001-pivot-omija-to-agentodo.md) records the earlier AgenTODO working name; [ADR 0002](docs/decisions/0002-todocrew-v1.md) establishes the V1 behavior contract and [ADR 0003](docs/decisions/0003-product-name-cofoco.md) sets the current product name.

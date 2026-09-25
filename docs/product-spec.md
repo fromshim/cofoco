@@ -1,14 +1,14 @@
-# TodoCrew V1 product specification
+# Cofoco V1 product specification
 
 Status: **V1 contract; implementation pending**
-Updated: 2026-09-07
-Decision record: [V1 reconciliation](decisions/0002-todocrew-v1.md)
+Updated: 2026-09-25
+Decision records: [V1 behavior contract](decisions/0002-todocrew-v1.md); [current product name](decisions/0003-product-name-cofoco.md)
 
 ## 1. Product and audience
 
-**TodoCrew keeps your commitments visible while you and your AI agents work across projects.**
+**Cofoco keeps your commitments visible while you and your AI agents work across projects.**
 
-- Product and wordmark: `TodoCrew`; package/future CLI: `todocrew`.
+- Product and wordmark: `Cofoco`; planned app package/future CLI: `cofoco`.
 - Category: a desktop todo companion shared by a person and their agents.
 - Primary UI: a desktop pet with a todo speech bubble above it.
 - First audience: individuals juggling local Claude Code/Codex CLI sessions and personal errands.
@@ -21,8 +21,8 @@ The list is useful without an agent. Agent integration is the initial differenti
 | Element | Meaning | Where it appears |
 |---|---|---|
 | Todo | An independently meaningful commitment/outcome the user wants to remember | Main list |
-| Step | A milestone or useful checkpoint within one Todo | Expanded Todo only |
-| Note | Context, decisions, links, or evidence; no completion state | Expanded Todo only |
+| Step | A milestone or useful checkpoint within one Todo | Todo detail only |
+| Note | Context, decisions, links, or evidence; no completion state | Todo detail only |
 
 A Todo need not take a particular amount of time. “영양제 사기” and “사내 위키 하네싱 설계” are both valid. A Step deserves a separate Todo when the user would want to remember it independently upon returning tomorrow.
 
@@ -47,7 +47,7 @@ Each Todo belongs to exactly one storage scope: **Personal / 내 할 일**, or a
 - Users create/rename projects and bind folders in the UI. Agents do not silently create projects.
 - Context resolution uses the longest registered containing real path. Non-Git folders work. Explicit aliases attach sibling folders/worktrees; automatic Git worktree discovery is deferred.
 - Unrecognized `cwd` returns unresolved context and permitted choices. It never silently assigns an agent write to Personal.
-- UI quick-add uses the selected scope. In All it defaults visibly to Personal and allows choosing a project.
+- UI capture opens from a circular `+` and uses a borderless natural-language composer with a visible Project selector above it. Personal is always the default; the user may choose a Project before submitting.
 - Moving a Todo preserves its ID, Steps, Notes, and history, and requires access to both scopes.
 
 ### Actual-list examples
@@ -60,7 +60,7 @@ These are classification examples, not imported user data or new commitments.
 | rescoop server, rescoop fe 백로그 형식 수정 | Rescoop | server 적용, FE 적용, 일관성 확인 |
 | 사내 wiki 훅 및 스킬 설계 | 사내 Wiki | 비개발자 PR 흐름, 훅, 스킬 계약 |
 | 사내 위키 하네싱 고려 | 사내 Wiki | 영역 인덱싱, 최신성, Confluence 연계 검토 |
-| TodoCrew 설계 | TodoCrew | 핵심 모델, 권한/알림, V1 범위 |
+| Cofoco 설계 | Cofoco | 핵심 모델, 권한/알림, V1 범위 |
 | 2주년 웹페이지 사진선정 및 이벤트 추출 | 2주년 웹페이지 | 사진 선정, 이벤트 추출 |
 | 2주년 꽃 사기 | Personal | 꽃/수령 정보는 Note |
 | 영양제 사기 | Personal | 구매 후보/링크는 Note |
@@ -107,7 +107,7 @@ V1 uses the **hybrid policy selected by the user on 2026-09-07**. Automatic writ
 An explicit user status change pins that value against automatic agent transitions, even after rereading the latest revision. Confirming a proposed status change is also user action. Creating an item with default open status does not itself pin the status.
 
 - Human authority comes from the trusted app/owner interface. MCP payloads such as `user_approved=true` cannot bypass confirmation.
-- Proposals leave current Todo content/status intact. Pending proposals live in Changes with a count, not a fourth Todo state or agent badge.
+- Proposals leave current Todo content/status intact. Pending proposals queue into one-at-a-time change bubbles above the Todo bubble, not a fourth Todo state or agent badge.
 - Show before/after values, reason, and newly proposed Todos. Accept/reject individually or as an explicitly presented atomic group. Rejection leaves originals unchanged.
 - Approval rechecks revisions and permissions. Changed targets invalidate the preview and require refreshed review.
 - Agent Step/Note writes on completed/deleted Todos are rejected. An approved reopen/restore is required first. Users can edit completed details directly; deleted content must first be restored.
@@ -128,19 +128,20 @@ Configured agents resolve permitted context, search existing Todos, read IDs/rev
 
 ## 7. Pet, list, and notifications
 
-- Compact bubble: up to five active Todos in the selected scope. Expanded list and details are usable without CLI.
+- The dense Todo bubble is the complete, scrollable list in the selected scope; there is no separate expanded list. Its header is a single `Todo ▾` scope control, and a selected Personal/Project scope name replaces `Todo`. Todo detail replaces the bubble content and is usable without CLI.
 - Active rows have stable manual order. New/reopened Todos append. Agent activity never sorts the list.
 - Completed items enter a collapsed Completed section after interaction ends, not while the row retains pointer/focus.
-- Remember scope; another project's event never navigates or steals focus. All rows include a small scope label; no live agent badge.
-- Required surfaces: compact bubble, expanded list, Todo details/Steps/Notes, Changes/history and approvals, Trash, project/folder settings, integration setup.
+- Remember scope; another project's event never navigates or steals focus. The main list uses no internal separator lines or persistent meta footer. Each row places one colored character between status and title; hover/focus reveals only the full Project name. Bound directories remain in Project settings. Color derives from stable Project ID. Hover/focus reveals a play action for `open`; `in_progress` shows a gently sequenced `…` animation with a long rest between cycles and a static reduced-motion fallback. This animation means only that the Todo status is `in_progress`, never that an agent session is live. Todo detail shows the full Project name above the title. There is no live agent badge.
+- Required surfaces: main Todo bubble, Todo details/Steps/Notes, one-at-a-time change/proposal bubble, history and approvals, Trash, project/folder settings, integration setup.
 - All routine Todo/Step/Note operations and proposal reviews are possible in the app.
-- Every committed Todo creation/edit/status/move/delete/restore has history and visible feedback. Background Todo changes trigger brief pet/bubble notifications; user changes receive inline feedback without a second popup.
+- Every committed Todo creation/edit/status/move/delete/restore has history and visible feedback. Background Todo changes create a change bubble; while any change/proposal remains visible, the open pet uses its noticed pose. User changes receive inline feedback without a second popup.
 - Step/Note changes update details/history without separate popups or pet animations. A new proposal triggers one review notification.
 - Rapid related Todo changes may share presentation; their events remain individually inspectable. Retries/no-ops do not notify.
 - OS notifications are off by default, opt-in for Todo changes/proposals. Quiet mode suppresses transient reactions, not history/unread changes. Denied OS permission does not prevent use.
 - Menu-bar restore, movable pet, keyboard operation, and reduced motion are required. Hiding changes no data; no focus stealing or inactivity punishment.
+- V1 supports a local custom pet image set grouped into `idle`, `working`, `noticed`, and `resting` motions. Idle requires at least one image; each group accepts one or more ordered frames, a one-frame group remains static, and missing optional groups fall back to idle. The setup guide asks for a stand/neutral-blink pair, a three-image alert-present arm circle (`1-2-3-2-1`) whose very short arms overlap in front of the torso while the head subtly bobs forward/back, a three-image in-progress dance (`A-B-A-C-A`) whose face and ears stay upright while the lower body sways and the same left hand points, and a lie/exhale-inhale pair on a consistent transparent canvas. Frames within a motion preserve character size and face-to-body proportion; the renderer swaps complete assets rather than manufacturing motion by translating or rotating one frame. Pose selection is strict: closed bubble uses resting; an open bubble with any visible alert uses the noticed arm circle; otherwise a visible in-progress Todo uses the working dance; otherwise idle. Imported assets stay on-device and are not uploaded for generation or moderation. Setup may provide a downloadable template and copyable prompt for use in an external image tool, but Cofoco does not bundle an image-generation API or require a particular provider. The importer accepts user-selected images without attempting to determine their licensing; the UI reminds the owner that they are responsible for usage rights. A distributable built-in pet still requires original or licensed art.
 
-Wireframes settle dimensions, placement, assets, and animation within this behavior contract.
+The [V1 UI direction and wireframe](ui-direction.md) settle review-candidate dimensions, placement, assets, and animation within this behavior contract.
 
 ## 8. Local integration and privacy
 
@@ -156,9 +157,11 @@ The CLI covers capture/query/status and app/integration diagnostics. Routine use
 
 V1 requires the pet plus two real local providers sharing a durable list across at least two project contexts, with permissions, visible changes, restart recovery, and no stale overwrite. [Vertical slice 1](vertical-slice-1.md) defines acceptance evidence.
 
-Deferred: other desktop OS releases, mobile/cloud/team features, IDE/Git GUI/worktree orchestration, agent launching/live supervision, automatic Git discovery, scheduling/recurrence/calendar sync, nested Steps, execution DAGs, semantic merge/embedding services, universal undo, and guaranteed capture. Preserved Git code is not a V1 dependency.
+Deferred: other desktop OS releases, mobile/cloud/team features, IDE/Git GUI/worktree orchestration, agent launching/live supervision, session presence/heartbeat, automatic Git discovery, scheduling/recurrence/calendar sync, nested Steps, execution DAGs, semantic merge/embedding services, universal undo, and guaranteed capture. Preserved Git code is not a V1 dependency.
 
 ## Change history
 
-- 2026-09-07: TodoCrew V1 contract; [decision](decisions/0002-todocrew-v1.md).
+- 2026-09-08: Dense borderless list, project marks, play/in-progress motion, detail hierarchy, and deferred live-session presence clarified in [UI direction](ui-direction.md).
+- 2026-09-07: V1 behavior contract (then named TodoCrew); [decision](decisions/0002-todocrew-v1.md).
+- 2026-09-25: Product/wordmark renamed to Cofoco; [decision](decisions/0003-product-name-cofoco.md).
 - 2026-09-04: Original Omija-to-AgenTODO direction in [ADR 0001](decisions/0001-pivot-omija-to-agentodo.md); superseded details are historical.

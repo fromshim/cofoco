@@ -1,6 +1,6 @@
 # Phase 0: integration engine + orchestration skill
 
-> Status: **Superseded** on 2026-09-04. Current scope: [TodoCrew V1](../../vertical-slice-1.md).
+> Status: **Superseded** on 2026-09-04. Current scope: [Cofoco V1](../../vertical-slice-1.md).
 > Historical context only. The old two-worker integration run is no longer the next product milestone.
 > Original snapshot: Git tag `omija-phase0` (commit `974ca87`).
 > Last updated: 2026-08-24

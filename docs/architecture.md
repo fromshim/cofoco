@@ -1,14 +1,14 @@
-# TodoCrew V1 architecture
+# Cofoco V1 architecture
 
 Status: **V1 behavioral/ownership contract; runtime selection pending; not implemented**
-Updated: 2026-09-07
+Updated: 2026-09-25
 Product contract: [product spec](product-spec.md)
 
 ## 1. Boundary and local lifecycle
 
 ```text
 Pet + bubble / trusted owner UI ─┐
-todocrew CLI ───────────────────┼─ Local application service ─ SQLite
+cofoco CLI ─────────────────────┼─ Local application service ─ SQLite
 Claude / Codex ─ MCP adapter ───┘           │
                                Durable events + proposals
                                           │
@@ -114,17 +114,17 @@ All responses carry a schema version; lists are bounded/paginated. Mutations tak
 
 | Tool | Required input / result |
 |---|---|
-| `todocrew_get_context` | Optional cwd → resolved permitted scope or unresolved, permitted choices, capture policy; no agent states |
-| `todocrew_list_todos` | Explicit scope or permitted All, optional query/status, cursor/limit → summary IDs/titles/revisions |
-| `todocrew_get_todo` | Todo ID → permitted Todo, Steps, Notes, revision and bounded recent changes |
-| `todocrew_create_todo` | Explicit scope, title, source/reason, key → created Todo or proposed creation |
-| `todocrew_update_todo` | ID, revision, explicit title/scope/status changes, key → policy-selected committed/proposed result |
-| `todocrew_delete_todo` | ID, revision, reason/key → soft-delete proposal |
-| `todocrew_restore_todo` | Deleted ID, revision, reason/key → restore proposal |
-| `todocrew_update_step` | Todo ID/revision; tagged add/edit/check/reorder/delete/restore operation → new revision/event |
-| `todocrew_update_note` | Todo ID/revision; tagged append/edit/delete/restore operation → committed or proposed result |
-| `todocrew_propose_changes` | Typed atomic change set, expected revisions, optional duplicate candidates, reason/key → proposal |
-| `todocrew_get_proposal` | Proposal ID → permitted review state/result, including accepted target IDs |
+| `cofoco_get_context` | Optional cwd → resolved permitted scope or unresolved, permitted choices, capture policy; no agent states |
+| `cofoco_list_todos` | Explicit scope or permitted All, optional query/status, cursor/limit → summary IDs/titles/revisions |
+| `cofoco_get_todo` | Todo ID → permitted Todo, Steps, Notes, revision and bounded recent changes |
+| `cofoco_create_todo` | Explicit scope, title, source/reason, key → created Todo or proposed creation |
+| `cofoco_update_todo` | ID, revision, explicit title/scope/status changes, key → policy-selected committed/proposed result |
+| `cofoco_delete_todo` | ID, revision, reason/key → soft-delete proposal |
+| `cofoco_restore_todo` | Deleted ID, revision, reason/key → restore proposal |
+| `cofoco_update_step` | Todo ID/revision; tagged add/edit/check/reorder/delete/restore operation → new revision/event |
+| `cofoco_update_note` | Todo ID/revision; tagged append/edit/delete/restore operation → committed or proposed result |
+| `cofoco_propose_changes` | Typed atomic change set, expected revisions, optional duplicate candidates, reason/key → proposal |
+| `cofoco_get_proposal` | Proposal ID → permitted review state/result, including accepted target IDs |
 
 `create_todo` accepts an explicit proposal mode for uncertain commitments; `update_todo` automatically routes protected fields to review. A mixed patch requiring any protected change proposes the whole patch. Agent Note restore requires review; append/edit/delete of its own unprotected Note is automatic.
 
@@ -136,15 +136,15 @@ Tools cannot register scopes, grant access, approve proposals, hard-delete recor
 
 Minimal human CLI command families:
 
-- `todocrew add`, `list`, `show`, `status` (open/in_progress/done).
-- `todocrew open`.
-- `todocrew integration install|status|remove`, `doctor`.
+- `cofoco add`, `list`, `show`, `status` (open/in_progress/done).
+- `cofoco open`.
+- `cofoco integration install|status|remove`, `doctor`.
 
 Capture/query/status support JSON. `status` denotes a Todo state edit, not agent supervision. Full Step/Note CRUD, approvals, or project-settings CLI parity is deferred; the app handles those. Owner CLI authentication is distinct from the MCP grant. The CLI is not advertised as a way for an agent to bypass review.
 
 Intended MCP transport is one authenticated loopback Streamable HTTP endpoint. Bind locally, validate host/origin, and keep credentials out of logs. A stdio bridge, if needed by an installed provider version, forwards to the same service/store. Exact client setup must be verified against installed Claude/Codex versions and their current official documentation during implementation.
 
-Setup is initiated by the owner, previews grants/config changes, preserves unrelated configuration, backs up changed files, installs idempotently, and removes only TodoCrew-owned entries. Distinguish configured from actually connected. Supply short global capture instructions; do not promise a lifecycle hook or guaranteed reconciliation.
+Setup is initiated by the owner, previews grants/config changes, preserves unrelated configuration, backs up changed files, installs idempotently, and removes only Cofoco-owned entries. Distinguish configured from actually connected. Supply short global capture instructions; do not promise a lifecycle hook or guaranteed reconciliation.
 
 Neither a provider marketplace plugin nor a separate model service/API key is required by the contract. Remote/cloud/container sessions outside the service's local reach are deferred.
 

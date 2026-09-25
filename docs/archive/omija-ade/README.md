@@ -1,6 +1,6 @@
 # Omija — archived Phase 0 README
 
-> Status: **Superseded** on 2026-09-04. Current direction: [TodoCrew product spec](../../product-spec.md).
+> Status: **Superseded** on 2026-09-04. Current direction: [Cofoco product spec](../../product-spec.md).
 > Historical context only. Do not use this as the current product direction.
 > Original snapshot: Git tag `omija-phase0` (commit `974ca87`).
 > Commands and source paths below describe the original layout, not the current product.

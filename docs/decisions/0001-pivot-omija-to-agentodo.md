@@ -3,7 +3,7 @@
 Status: **Historical; product name and V1 details superseded by [ADR 0002](0002-todocrew-v1.md)**
 Date: 2026-09-04
 
-이 문서는 당시 AgenTODO라는 작업명으로 결정한 이력을 보존한다. 현재 제품은 **TodoCrew**이며 아래 상태/범위/후속 작업은 최신 계약으로 해석하지 않는다. 현재 기준은 [제품 명세](../product-spec.md)와 [ADR 0002](0002-todocrew-v1.md)다.
+이 문서는 당시 AgenTODO라는 작업명으로 결정한 이력을 보존한다. 현재 제품은 **Cofoco**이며 아래 상태/범위/후속 작업은 최신 계약으로 해석하지 않는다. 현재 기준은 [제품 명세](../product-spec.md), [ADR 0002](0002-todocrew-v1.md)의 V1 행동 계약, [ADR 0003](0003-product-name-cofoco.md)의 제품명이다.
 
 ## Context
 
