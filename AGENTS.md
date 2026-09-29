@@ -2,7 +2,7 @@
 
 ## Current product
 
-- Product/wordmark: **Cofoco**; planned app package/future CLI: `cofoco`. The current root package remains the preserved Git-engine workspace.
+- Product/wordmark: **Cofoco**; planned app package/current Swift CLI: `cofoco`. The current root package remains the preserved Git-engine workspace.
 - A local-first todo companion shared by a user and their agents. Initial V1 delivery/validation is macOS, one OS user, one local store.
 - Desktop pet with a Todo speech bubble is the primary interface.
 - Personal and logical Projects are flat scopes. Projects bind zero or more folders; `All` is a view.
@@ -11,7 +11,8 @@
 - List header uses one `Todo ▾` scope control; a selected scope name replaces `Todo`. The main list has no internal separators or meta footer. At rest, capture is a circular `+`; it opens a borderless natural-language composer with a Project selector above and Personal selected by default. Row UI: checkbox + one-character project mark + title, hover/focus play action to start, animated `…` for in-progress. The animation communicates Todo status only and becomes static under Reduce Motion. The mark is colored text without a chip; hover/focus exposes only the Project name. Todo detail shows the full Project name above the title. Bound directories stay in Project settings. No live agent/needs-you/blocked states.
 - The wireframe may use user-supplied character references for flow review, but distributable defaults require confirmed rights or original art. V1 custom pets are local image imports, not an in-app generation service: idle is required; working (in-progress dance), noticed (alert-present alternating arm circle with a subtle head bob), and resting poses are optional fallbacks. Do not upload or moderate imported pet files through a Cofoco server.
 - Hybrid policy: agent capture/start/Step maintenance can be automatic; important existing Todo changes require owner approval in the app. Explicit user status choices remain protected after rereading.
-- No Cofoco feature code exists yet. IDE/Git GUI, agent launch/supervision, automatic Git discovery, cloud/mobile/team features and other desktop OS releases are deferred.
+- The standalone Swift core exists in `packages/cofoco-core/`; initial authenticated local MCP service and minimal CLI exist in `packages/cofoco-service/` and `packages/cofoco-cli/`. One isolated Claude Code integration has been verified. Provider setup remains manual; the pet app and second-provider integration do not yet exist. IDE/Git GUI, agent launch/supervision, automatic Git discovery, cloud/mobile/team features and other desktop OS releases are deferred.
+- The UI baseline is owner-approved. [ADR 0004](docs/decisions/0004-macos-runtime.md) selects SwiftUI/AppKit + bundled Swift service + system SQLite3. `experiments/macos-runtime/` is an isolated feasibility probe, not production feature code; do not promote its fixture schema, raw health HTTP parser or synchronous shutdown unchanged.
 
 ## Source of truth
 
@@ -44,4 +45,6 @@ Read in order:
 - Personal access is explicit opt-in. Scope filtering covers search, history, proposals and receipt replay.
 - Todo/proposal changes have visible feedback; Step/Note changes only update details/history.
 - Add meaningful feature tests as implementation lands. Existing `pnpm test` and `pnpm typecheck` validate only the preserved Git engine.
+- Run `swift test --package-path packages/cofoco-core` for the actual Cofoco core; keep its SQLite tests separate from the isolated runtime experiment and legacy Git engine.
+- Run `swift test --package-path packages/cofoco-service` and `swift test --package-path packages/cofoco-cli` for the transport and CLI. See `docs/local-integration.md` for the first-provider smoke evidence and limits.
 - Documentation must distinguish accepted design, chosen implementation defaults, unimplemented features and verified evidence.

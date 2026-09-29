@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-29 — first local CLI/MCP integration
+
+Added a minimal Swift `cofoco` owner CLI and a loopback Swift service hosting the existing core with separate Keychain-backed owner/integration credentials. The authenticated MCP adapter exposes the first Todo/Step/Note tool surface without an approval bypass or direct SQLite access by agents.
+
+- Verified a real isolated Claude Code 2.1.284 session creating, listing, starting and rereading a Personal Todo through MCP; an independent owner CLI read confirmed `in_progress` at revision 2. A separate Claude session reread it after another initialize without a service restart.
+- Fixed repeat-initialize and concurrent JSON-RPC ID handling with per-grant serialized SDK contexts. Service tests 2/2 and CLI tests 7/7 passed; core test verification and remaining gates are recorded in [the integration note](docs/local-integration.md).
+- Provider registration is manual, Codex CLI is untested, and the service is not yet app-managed or release-packaged. No V1 acceptance row or product release is claimed. This entry does not imply a commit or push.
+
+## 2026-09-29 — standalone Cofoco core
+
+Added `packages/cofoco-core/`: a Swift/SQLite Todo, Step, Note and Project store behind a shared application service. It implements revision conflicts, scoped integration grants, durable events and idempotency receipts, protected-change proposals with atomic owner review, soft deletion, folder bindings and a tested v1→v2 backup migration.
+
+- Verified 26/26 core tests for retry/no-op, rollback, scope/revocation, status pinning, stale/group approval, restart and backup restoration; independently reran 26/26 preserved Git-engine tests and typecheck.
+- [Core implementation notes](docs/core-service.md) distinguish tested policy from the unbuilt MCP/CLI transport, hosted helper, pet UI and real-provider validation. No V1 end-to-end acceptance row is claimed.
+- The approved UI/runtime experiment files from the prior step remain in the working tree; this entry does not imply a commit or release.
+
+## 2026-09-28 — UI approval and native macOS runtime decision
+
+The owner approved the Cofoco UI baseline. A parallel window/service/packaging experiment selected SwiftUI/AppKit, a bundled Swift service helper and system SQLite3; [ADR 0004](docs/decisions/0004-macos-runtime.md) records defaults, evidence and limits.
+
+- Added reproducible, isolated [experiment build/verification scripts](experiments/macos-runtime/README.md) and [window](docs/experiments/window-spike.md), [service](docs/experiments/service-spike.md), and [packaging](docs/experiments/packaging-spike.md) reports.
+- Verified an optimized, locally ad-hoc-signed arm64 app, native window/helper health and clean shutdown, SQLite atomic state/event/receipt, revision/retry behavior, WAL-aware migration backup and single-service ownership. Fixed an AppKit termination wait and missing standard Edit shortcuts during integration.
+- The coordinator independently reran PKG-01–09 successfully and exercised final-app focus, Korean paste and pet hide/restore on macOS 26.5.2. Geometry uses synthetic screen cases; macOS 14 is a deployment target, not a tested older-OS claim.
+- Marked UI Todo 2 done and the runtime Step of Todo 3 done. Production Todo/MCP/CLI/pet features and all V1 acceptance rows remain unimplemented/unverified. Native experiments do not replace the preserved Git-engine tests.
+
 ## 2026-09-25 — Cofoco product name
 
 Renamed the active product identity from TodoCrew to Cofoco in the product contract, architecture, backlog, UI direction, design guidance, handoff, and wireframe wordmark. The local checkout and existing documentation/design asset paths are preserved. No feature code was implemented.

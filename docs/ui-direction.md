@@ -1,9 +1,11 @@
 # Cofoco V1 UI direction and wireframe specification
 
-Status: **Review candidate; no production UI implemented**
-Updated: 2026-09-25
+Status: **Owner-approved UI baseline; no production UI implemented**
+Updated: 2026-09-28
 Prototype: [interactive wireframe](wireframes/todocrew-v1.html)
 Design tokens: [Cofoco design system](../design-system/todocrew/MASTER.md)
+
+The owner explicitly approved this UI baseline on 2026-09-28 for the macOS runtime experiment and subsequent implementation. This approves the interaction and visual direction, not production acceptance or distribution rights for the reference character assets.
 
 ## Direction
 
@@ -32,7 +34,7 @@ Cofoco has one anchored stack per active display:
 
 There is no separate expanded list or Changes tab. The stack grows upward from the pet anchor and clamps inside the visible screen. Pet and bubbles move as a unit. V1 does not require free-floating subwindows.
 
-“Native on the desktop” is a product constraint, while the exact implementation toolkit remains an architecture-spike decision. The runtime candidate must demonstrate a transparent/borderless macOS window, system materials with accessibility fallbacks, correct focus and pointer behavior, menu-bar recovery, and multi-display placement.
+“Native on the desktop” is a product constraint. [ADR 0004](decisions/0004-macos-runtime.md) selects SwiftUI content with AppKit window/menu control after the runtime experiment. Production verification still includes transparent-region pointer behavior, menu-bar recovery, accessibility and physical multi-display placement; the experiment does not complete the shipping UI.
 
 ## Information architecture
 
@@ -182,4 +184,4 @@ The prototype must demonstrate:
 - a play start action, sequenced in-progress dots with a reduced-motion fallback, and the full Project name above the detail title;
 - no expanded list, Changes tab, fourth Todo status, or live agent indicator.
 
-After owner approval, mark Todo 2 done and use this document as the behavioral input to the runtime/framework spike. The prototype is not implementation evidence for the V1 acceptance matrix.
+Owner approval was recorded on 2026-09-28 and Todo 2 is done. Use this document as the behavioral input to the runtime/framework spike and production UI. The prototype is not implementation evidence for the V1 acceptance matrix.

@@ -1,7 +1,7 @@
 # Cofoco design system
 
-Status: **V1 UI direction; awaiting owner review**
-Updated: 2026-09-09
+Status: **Owner-approved V1 UI baseline; production UI pending**
+Updated: 2026-09-28
 
 Cofoco is a macOS desktop companion, not a branded dashboard. Its visual identity comes from the pet, the speech-bubble silhouette, and the small project marks. The application UI follows the current macOS appearance with no product key color.
 
@@ -102,3 +102,5 @@ The 36px row is a desktop-density choice for precise pointer input, not a mobile
 [Interactive wireframe](../../docs/wireframes/todocrew-v1.html) is a dependency-free design artifact. It approximates macOS blur in HTML; it does not select a desktop framework, persist data, contact MCP, or count as Cofoco feature implementation.
 
 The production runtime must prove native macOS window behavior, semantic materials, light/dark appearance, Reduce Transparency, Increase Contrast, VoiceOver, keyboard order, multiple displays, focus behavior, and transparent-window hit testing. A framework that can only imitate these behaviors is not sufficient without a successful spike.
+
+The owner approved the UI baseline on 2026-09-28. The separate [native runtime experiment and decision](../../docs/decisions/0004-macos-runtime.md) selected SwiftUI/AppKit and verified its initial window/service/package feasibility. That result does not complete the production accessibility, appearance or multi-display checks above.

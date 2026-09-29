@@ -1,7 +1,7 @@
 # Cofoco V1 architecture
 
-Status: **V1 behavioral/ownership contract; runtime selection pending; not implemented**
-Updated: 2026-09-25
+Status: **V1 behavioral/ownership contract; native runtime selected; standalone core and initial CLI/MCP service implemented; app and provider setup pending**
+Updated: 2026-09-29
 Product contract: [product spec](product-spec.md)
 
 ## 1. Boundary and local lifecycle
@@ -17,9 +17,9 @@ Claude / Codex ─ MCP adapter ───┘           │
 
 One local service owns policy and mutations. UI, CLI, and MCP cannot independently write the store. MCP is an adapter, not an additional database or embedded reasoning model.
 
-The app starts/reconnects its service automatically. Closing a bubble/hiding the pet keeps the service running. Explicit Quit stops the service after committed writes finish; MCP then reports retryable unavailability. A CLI or MCP bridge must not silently initialize a competing store. A single-instance lock prevents simultaneous owners of the same database.
+The app is intended to start/reconnect its service automatically. Closing a bubble/hiding the pet should keep the service running; explicit Quit should stop it after committed writes finish. This app lifecycle is not implemented yet. The current `cofoco-service` is started manually for testing and hosts one SQLite store behind owner HTTP and MCP endpoints. A CLI or MCP bridge must not silently initialize a competing store; the production single-instance/lifecycle gate remains open.
 
-Initial target is macOS. The later runtime spike chooses desktop framework, IPC, SQLite driver, service packaging/startup, credential storage, and installer/distribution details. This specification does not claim a tested toolkit or provider configuration format.
+Initial target is macOS. [ADR 0004](decisions/0004-macos-runtime.md) selects SwiftUI/AppKit, a bundled Swift service helper and system SQLite3 after a reproducible runtime experiment. App bootstrap uses a private pipe; external CLI/MCP uses authenticated loopback HTTP with distinct owner/integration authority. Keychain is the credential-storage default. The local ad-hoc app bundle was verified on macOS 26.5.2 arm64 with a macOS 14 deployment target; provider configuration, production permissions and public distribution remain unverified.
 
 ## 2. Domain records
 
@@ -132,17 +132,20 @@ Stable outcomes: `created | updated | deleted | restored | noop | proposed`. Rea
 
 Tools cannot register scopes, grant access, approve proposals, hard-delete records, launch agents, or write SQLite. Source metadata contains optional provider/session references but never changes actor authority.
 
+The initial MCP adapter implements the listed tools except `cofoco_propose_changes`; grouped proposals remain a contract-only shape until typed references to newly reserved Todo IDs are settled. The adapter's individual tool behavior does not imply that every V1 acceptance case has passed end to end.
+
 ## 8. CLI and provider setup
 
-Minimal human CLI command families:
+Minimal human CLI command families (initial implementation in `packages/cofoco-cli/`):
 
 - `cofoco add`, `list`, `show`, `status` (open/in_progress/done).
 - `cofoco open`.
-- `cofoco integration install|status|remove`, `doctor`.
+- `cofoco integration grant|status|revoke|auth-header`, `doctor`. Grant/revoke manage one scoped credential, not provider configuration; `auth-header` is intended only as a provider header helper and prints a bearer secret to its caller.
+- Planned `cofoco integration install|remove` must add/remove only Cofoco-owned provider configuration entries; it is not implemented.
 
 Capture/query/status support JSON. `status` denotes a Todo state edit, not agent supervision. Full Step/Note CRUD, approvals, or project-settings CLI parity is deferred; the app handles those. Owner CLI authentication is distinct from the MCP grant. The CLI is not advertised as a way for an agent to bypass review.
 
-Intended MCP transport is one authenticated loopback Streamable HTTP endpoint. Bind locally, validate host/origin, and keep credentials out of logs. A stdio bridge, if needed by an installed provider version, forwards to the same service/store. Exact client setup must be verified against installed Claude/Codex versions and their current official documentation during implementation.
+The initial MCP transport is one authenticated loopback Streamable HTTP endpoint (`127.0.0.1:57321/mcp`) using the pinned official Swift MCP SDK and SwiftNIO. It validates host/origin and resolves each authenticated grant against current stored credential references before invoking core policy; each grant has an isolated serialized SDK context. This avoids cross-grant JSON-RPC ID collisions, and repeated `initialize` replaces the SDK context only after a successful handshake. A stdio bridge, if needed by a provider, would forward to the same service/store. The isolated [Claude Code smoke test](local-integration.md) verified actual tool calls; Codex CLI and installed configuration remain unverified.
 
 Setup is initiated by the owner, previews grants/config changes, preserves unrelated configuration, backs up changed files, installs idempotently, and removes only Cofoco-owned entries. Distinguish configured from actually connected. Supply short global capture instructions; do not promise a lifecycle hook or guaranteed reconciliation.
 
@@ -156,9 +159,9 @@ Todo changes and new proposals produce transient feedback according to the produ
 
 Durable notification records prevent duplicate app-level presentations on retry/reconnect. OS notification delivery is best effort, opt-in, and cannot guarantee exactly-once display; in-app history remains authoritative. Quiet/hide settings do not delete events.
 
-## 10. Deferred implementation choices
+## 10. Runtime selection and implementation gates
 
-Before feature code, produce a small runtime decision covering:
+The 2026-09-28 [runtime decision](decisions/0004-macos-runtime.md) covers:
 
 - macOS transparent window, input/focus, menu bar, positioning/multiple displays, accessibility;
 - desktop framework and SQLite runtime compatibility;
@@ -167,4 +170,4 @@ Before feature code, produce a small runtime decision covering:
 - database schema/migrations/backups and event subscription;
 - app packaging and local installation.
 
-These are engineering validation gates, not unsettled product behaviors. No new package forest or toolkit dependencies are introduced by this specification. Only the preserved `packages/git-engine/{src,test}` currently executes.
+The feasibility gate passed; [the three experiment reports](decisions/0004-macos-runtime.md#evidence-and-limits) distinguish tested mechanisms from production defaults. The isolated `experiments/macos-runtime` app/helper remains separate from the [standalone Swift core](core-service.md), initial [local service/CLI](local-integration.md), and preserved Git-engine tests. The initial service hosts core policy with system SQLite3, Keychain-backed owner/integration secrets and pinned Swift MCP/HTTP dependencies; it is not yet bundled/managed by the pet app. The experiment's fixture schema, hand-written health parser and synchronous shutdown are not production service code. Implement nonblocking app shutdown, forced-crash recovery, provider setup, event subscriptions and release-grade Keychain/signing behavior against this contract.
