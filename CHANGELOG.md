@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-01 — native pet app connected
+
+Added `packages/cofoco-app/`: SwiftUI/AppKit pet and speech bubbles using the shared authenticated owner service. List/detail/Step/Note controls, proposal review, history, Project/folder/grant settings, Trash, local custom PNG/WebP pets, quiet/reduced-motion behavior and opt-in macOS notifications are connected. The bundled default is original code-drawn art; Usagi reference assets are not shipped.
+
+- Added owner event/grant reads and detail/child/review/settings routes; corrected legacy Project event-source decoding without weakening owner/MCP isolation.
+- Added automatic helper lifecycle, nonblocking Quit, parent-loss monitoring, app/store locks, unread queue persistence and identical-key pending-request recovery. [ADR 0005](docs/decisions/0005-desktop-owner-channel.md) records owner HTTP/cursor polling instead of the spike's planned pipe.
+- Automated suites: core 27/27, service 3/3, CLI 7/7, app 11/11. Native smoke verified capture/Step/Note, Project creation, MCP proposal preview/owner acceptance, status/interaction deferral, Step/Trash restoration, custom import, hide/restore, app restart and forced-helper-loss recovery. Optimized bundle/local signature verification passed.
+- Lifecycle regression passed three rapid helper restart/clean-exit cycles and wrapper-parent loss; actual native app force-quit also cleaned its helper and recovered saved UI data on relaunch. Fixed socket reuse and background callback actor isolation exposed by these checks.
+- [Evidence and limits](docs/native-app.md) keep full accessibility/platform checks, OS notification delivery, second-provider/setup, dogfooding and public signing/notarization open. Step 4 implementation does not declare V1 launch acceptance.
+
 ## 2026-09-29 — first local CLI/MCP integration
 
 Added a minimal Swift `cofoco` owner CLI and a loopback Swift service hosting the existing core with separate Keychain-backed owner/integration credentials. The authenticated MCP adapter exposes the first Todo/Step/Note tool surface without an approval bypass or direct SQLite access by agents.

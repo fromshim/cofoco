@@ -1,7 +1,7 @@
 # Cofoco V1 architecture
 
-Status: **V1 behavioral/ownership contract; native runtime selected; standalone core and initial CLI/MCP service implemented; app and provider setup pending**
-Updated: 2026-09-29
+Status: **V1 contract; native app/core/initial CLI/MCP implemented; provider setup and full acceptance pending**
+Updated: 2026-10-01
 Product contract: [product spec](product-spec.md)
 
 ## 1. Boundary and local lifecycle
@@ -17,9 +17,9 @@ Claude / Codex ─ MCP adapter ───┘           │
 
 One local service owns policy and mutations. UI, CLI, and MCP cannot independently write the store. MCP is an adapter, not an additional database or embedded reasoning model.
 
-The app is intended to start/reconnect its service automatically. Closing a bubble/hiding the pet should keep the service running; explicit Quit should stop it after committed writes finish. This app lifecycle is not implemented yet. The current `cofoco-service` is started manually for testing and hosts one SQLite store behind owner HTTP and MCP endpoints. A CLI or MCP bridge must not silently initialize a competing store; the production single-instance/lifecycle gate remains open.
+The native app starts/reconnects its bundled service automatically. Hiding keeps it running; explicit Quit asynchronously stops the app-owned helper, with a bounded forced-stop fallback. The service drains tracked requests on SIGTERM/SIGINT and app-launched helpers monitor their actual parent PID. A pre-existing manually launched service is reused but not stopped by app Quit. App and core-store locks prevent competing owners. A CLI/MCP bridge must not silently initialize a competing store; broader lifecycle/release validation remains open. See [native app evidence](native-app.md).
 
-Initial target is macOS. [ADR 0004](decisions/0004-macos-runtime.md) selects SwiftUI/AppKit, a bundled Swift service helper and system SQLite3 after a reproducible runtime experiment. App bootstrap uses a private pipe; external CLI/MCP uses authenticated loopback HTTP with distinct owner/integration authority. Keychain is the credential-storage default. The local ad-hoc app bundle was verified on macOS 26.5.2 arm64 with a macOS 14 deployment target; provider configuration, production permissions and public distribution remain unverified.
+Initial target is macOS. [ADR 0004](decisions/0004-macos-runtime.md) selects SwiftUI/AppKit, a bundled Swift service helper and system SQLite3. [ADR 0005](decisions/0005-desktop-owner-channel.md) supersedes the planned private owner pipe: the app reuses authenticated loopback owner HTTP with a separate Keychain capability; integrations retain distinct authority. Schema version 1 is checked before enabling app requests. Local ad-hoc bundles target macOS 14; older-OS execution, provider configuration, signed Keychain behavior and public distribution remain unverified.
 
 ## 2. Domain records
 
@@ -153,7 +153,7 @@ Neither a provider marketplace plugin nor a separate model service/API key is re
 
 ## 9. Events and presentation
 
-Desktop loads a snapshot with event cursor and subscribes from that cursor without a race gap. On cursor expiry/gap, refetch. Events filtered by grant still allow opaque cursor progression without revealing inaccessible payloads.
+The native desktop captures the current cursor before loading a snapshot, then polls the durable owner feed every two seconds from that cursor. It journals unread Todo events and cursor together and reloads pending proposals on launch/reconnect. This is polling, not a push subscription; concurrent snapshot changes converge on the next refresh without skipping their event. A future expired/reset-cursor mechanism must refetch safely. Events filtered by grant still must permit opaque cursor progression without exposing inaccessible payloads.
 
 Todo changes and new proposals produce transient feedback according to the product policy. Step/Note changes remain in history/details without separate alerts. Idempotent retries and no-ops do not create events. A single atomic change set may yield multiple inspectable semantic events and one notification presentation.
 
@@ -170,4 +170,4 @@ The 2026-09-28 [runtime decision](decisions/0004-macos-runtime.md) covers:
 - database schema/migrations/backups and event subscription;
 - app packaging and local installation.
 
-The feasibility gate passed; [the three experiment reports](decisions/0004-macos-runtime.md#evidence-and-limits) distinguish tested mechanisms from production defaults. The isolated `experiments/macos-runtime` app/helper remains separate from the [standalone Swift core](core-service.md), initial [local service/CLI](local-integration.md), and preserved Git-engine tests. The initial service hosts core policy with system SQLite3, Keychain-backed owner/integration secrets and pinned Swift MCP/HTTP dependencies; it is not yet bundled/managed by the pet app. The experiment's fixture schema, hand-written health parser and synchronous shutdown are not production service code. Implement nonblocking app shutdown, forced-crash recovery, provider setup, event subscriptions and release-grade Keychain/signing behavior against this contract.
+The feasibility gate passed; [the experiment reports](decisions/0004-macos-runtime.md#evidence-and-limits) remain distinct from the core, service and [native app](native-app.md). The real service now ships inside the local app bundle, hosts system SQLite3/core policy with Keychain-backed credentials, and uses the pinned MCP SDK/SwiftNIO rather than the spike's fixture schema/raw HTTP parser. Nonblocking app shutdown and forced-helper-loss recovery are implemented; provider setup, complete process-boundary acceptance, platform/accessibility checks and release-grade Keychain/signing remain gates.

@@ -44,6 +44,23 @@ final class CoreServiceTests: XCTestCase {
         XCTAssertTrue(try service.listProposals(as: agent).isEmpty)
     }
 
+    func testOwnerFeedReadsLegacyProjectSourcesWithoutGrantDisclosure() throws {
+        _ = try service.createProject(name: "Desktop project", key: "owner-feed-project", as: .owner)
+        _ = try service.store.transaction { db in
+            try db.execute("UPDATE change_events SET source='owner' WHERE aggregate_type='project'")
+        }
+        let events = try service.ownerEvents(after: 0, as: .owner)
+        XCTAssertTrue(events.contains(where: { $0.operation == "project_created" }))
+        XCTAssertEqual(try service.latestOwnerEventCursor(as: .owner), events.last?.cursor)
+        assertError(.permissionDenied, try service.ownerEvents(after: 0, as: agent))
+        assertError(.permissionDenied, try service.latestOwnerEventCursor(as: agent))
+        assertError(.permissionDenied, try service.ownerIntegrations(as: agent))
+        assertError(.invalidInput, try service.ownerEvents(after: -1, as: .owner))
+        let summaries = try service.ownerIntegrations(as: .owner)
+        XCTAssertEqual(summaries.map(\.id), ["claude", "codex"])
+        XCTAssertFalse(String(decoding: try JSONEncoder().encode(summaries), as: UTF8.self).contains("credential"))
+    }
+
     func testAgentAutoStartAndOwnerSameValueStatusPin() throws {
         let todo = try create(as: agent)
         let started = try run(.update(id: todo.id, expectedRevision: 1, patch: TodoPatch(status: .inProgress)), as: agent)

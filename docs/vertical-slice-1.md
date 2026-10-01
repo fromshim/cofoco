@@ -1,7 +1,7 @@
 # Cofoco V1 — backlog and acceptance
 
-Status: **V1 contract/UI approved; native runtime spike verified; standalone core and initial CLI/MCP service implemented; full integration pending**
-Updated: 2026-09-29
+Status: **V1 contract/UI approved; native app/core/initial CLI/MCP connected; full acceptance pending**
+Updated: 2026-10-01
 
 ## Outcome and current evidence
 
@@ -9,7 +9,7 @@ A user manages coarse personal/project Todos and optional Steps through a pet bu
 
 The original Omija baseline is commit `974ca87`, tag `omija-phase0`. Git source/tests are preserved under `packages/git-engine`; ADE documents and the inactive skill are archived. These are preservation work, not Cofoco features.
 
-The [standalone Swift core](core-service.md) implements Todo/Step/Note/Project storage, service policy and review proposals. The first [local service, minimal CLI and MCP adapter](local-integration.md) now host that core. An isolated Claude Code session performed actual create/list/update/get calls through MCP; a separate owner CLI read confirmed the persisted result, and reconnection succeeded without restarting the service. Provider configuration is still manual, Codex CLI has not been integrated, and the desktop pet remains unimplemented. The isolated [macOS runtime experiment](decisions/0004-macos-runtime.md) is feasibility evidence, not a production app. Existing `pnpm test`/typecheck still validate only the preserved Git engine.
+The [core](core-service.md), [local service/CLI/MCP](local-integration.md) and [native pet app](native-app.md) now share one mutation boundary. An isolated real Claude session completed MCP capture/read/start; isolated native flows additionally verified capture/details, approval, Step/Trash restoration, local pet import, unread/restart and forced-helper-loss recovery. Provider setup is manual and Codex has not been integrated. The runtime experiment remains feasibility-only evidence; `pnpm test`/typecheck still validate only the preserved Git engine. Current Cofoco suites pass core 27/27, service 3/3, CLI 7/7 and app 11/11.
 
 ## Coarse Todos for building V1
 
@@ -53,18 +53,18 @@ This is a documentation backlog using the intended Todo/Step structure, not data
 - [ ] Decide typed references to Todos newly reserved inside a single proposal group before exposing that operation shape through MCP; the current core supports existing-Todo changes plus follow-up creates atomically.
 - [ ] Provide idempotent provider-config setup/removal and connection diagnostics. CLI grant/revoke and `doctor` exist, but installed provider configuration is still manual and `connected` is not live presence.
 - [x] Add core tests for permission, retry, conflicts, proposals and restart, plus initial MCP/CLI tests for owner isolation, scope filtering, retry, revocation, JSON-RPC collisions and repeated initialize.
-- [ ] Complete production migration/recovery, forced-process-crash recovery, app-managed service lifecycle, release-grade Keychain access and event subscription. The core tests cover v1→v2 WAL-aware backup/restore; the first local service uses Keychain credentials and pinned Swift MCP/HTTP dependencies, but the remaining production gates are open.
-- Note: use a developer-level trusted approval test harness until the pet review UI exists. It must not ship as an MCP approval bypass.
+- [ ] Complete production migration/recovery, in-flight crash/lost-response recovery and release-grade Keychain access. Core tests cover v1→v2 WAL-aware backup/restore; app-managed lifecycle and ordinary forced-process recovery are now verified in Step 4. Durable two-second cursor polling replaces the planned push subscription under ADR 0005; remaining production gates are open.
+- Note: Step 3 used a developer-level trusted approval harness; Step 4 now provides app owner review. Neither is an MCP approval bypass.
 
-### Todo 4 — 데스크톱 펫 V1 완성 · open
+### Todo 4 — 데스크톱 펫 V1 완성 · in_progress
 
-- [ ] Implement the approved pet/bubble/list/detail wireframes against the same core.
-- [ ] Implement user CRUD, Step/Note editing, proposal acceptance/rejection, project settings, and Trash.
-- [ ] Subscribe to committed events with snapshot/reconnect recovery.
-- [ ] Implement stable ordering, history, quiet/reduced-motion settings and optional OS notifications.
-- [ ] Implement menu-bar restore, service lifecycle and a locally installable macOS build.
+- [x] Implement native pet/bubble/list/detail against the shared service; original code-drawn default, local custom PNG/WebP frames and idle fallback.
+- [x] Implement user CRUD, Step/Note editing/reorder/child restoration, approval controls, Project/folder/grant settings and Trash. Native capture, approval, status, Step restoration, Todo Trash and custom import were observed; remaining operation combinations have service tests/code but not exhaustive desktop evidence.
+- [x] Implement two-second committed-event cursor polling, paginated snapshots/history, unread queue recovery and identical-key pending-mutation replay. This is not a push subscription.
+- [x] Implement stable stored ordering, completion interaction deferral, history, quiet/reduced-motion presentation and opt-in OS notifications. OS permission/delivery still needs environment validation.
+- [x] Implement menu-bar restore, app/core single-instance locks, automatic bundled helper, nonblocking Quit and local optimized/ad-hoc-signed macOS build; native hide/restore, ordinary restart, forced helper/app loss, parent cleanup and three rapid helper restarts verified.
 - [ ] Verify nonblocking shutdown/timeouts, transparent-region pointer behavior, menu-bar recovery, VoiceOver/system accessibility toggles and physical multi-display/Spaces behavior; validate macOS 14/other architectures before claiming compatibility.
-- Note: no agent status badge, process launching, Git GUI or cloud dependency.
+- Note: Step 4 implementation is connected; this Todo stays in_progress until its platform/accessibility checks pass. [Native evidence and limits](native-app.md) do not declare complete V1 acceptance. No live agent badge, agent launching, Git GUI or cloud dependency.
 
 ### Todo 5 — 실제 두 에이전트 사용 검증 및 V1 판정 · open
 
@@ -120,7 +120,7 @@ All rows require passing evidence before declaring V1 complete. Use isolated fix
 
 ## Completion evidence format
 
-For each ID, record build/commit, automated test or manual steps, expected/actual result and date. Record which installed provider versions were used. The [core evidence](core-service.md) verifies portions of A02–A04, A06–A13 and A15–A24 at the service boundary. The [first-provider evidence](local-integration.md) adds an actual Claude MCP capture/read/start/readback path and local reconnection, but does not complete an entire V1 acceptance row; app flows and the second provider are still missing.
+For each ID, record build/commit, automated test or manual steps, expected/actual result and date. The [core evidence](core-service.md), [first-provider evidence](local-integration.md) and [native evidence](native-app.md) verify portions of the matrix at their respective boundaries. Second-provider, full platform/UX and ordinary-use evidence are still missing; no complete V1 acceptance row is claimed from isolated checks alone.
 
 The dogfood note should include at least one real missed/false capture review (or an explicit observation of none), notification burden, and whether coarse Todos stayed understandable without opening every Step. A high Todo count is not a success metric.
 

@@ -451,7 +451,9 @@ public final class CoreService {
     func event(_ row: SQLRow) throws -> ChangeEvent {
         ChangeEvent(cursor: row.int64("cursor"), aggregateID: row.string("aggregate_id"), actorID: row.string("actor_id"),
                     operation: row.string("operation"), before: row.optionalString("before_json"), after: row.optionalString("after_json"),
-                    reason: row.string("reason"), resultingRevision: row.int64("resulting_revision"), source: try decode(Source.self, row.string("source")), feedback: row.string("feedback"))
+                    reason: row.string("reason"), resultingRevision: row.int64("resulting_revision"),
+                    source: row.string("source") == "owner" ? Source() : try decode(Source.self, row.string("source")),
+                    feedback: row.string("feedback"))
     }
     func receipt(key: String, fingerprint: String, result: MutationResult, access: ReceiptAccess, as principal: Principal) throws {
         try store.execute("INSERT INTO operation_receipts(actor_id,key,fingerprint,result_json,access_json,created_at) VALUES(?,?,?,?,?,?)",

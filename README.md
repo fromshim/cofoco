@@ -10,7 +10,7 @@ Connected agents can capture agreed Todos, start work and maintain Steps. Import
 
 ## Current status
 
-**V1 specification and UI baseline are approved; the native macOS runtime experiment passed.** The Swift Todo/Step/Note/Project core, first hosted local service, minimal owner CLI and authenticated MCP adapter are implemented. An isolated Claude Code session created, listed, started and reread one real Todo through MCP; a second initialization also succeeded without restarting the service. Provider setup is still manual. The pet app and Codex CLI integration are not implemented/verified. Initial delivery targets one Mac.
+**The native pet app is connected to the shared Swift core/service/CLI/MCP.** Its list/details, approval, settings, Trash, local custom pet and restart recovery have isolated desktop evidence. One real Claude Code integration has passed; provider setup is manual and Codex integration/full V1 acceptance remain open. Initial delivery targets one Mac. See [native app build/evidence](docs/native-app.md).
 
 The isolated [runtime experiment](experiments/macos-runtime/README.md) builds a SwiftUI/AppKit test window and bundled Swift/SQLite helper. The preserved [Omija Git engine](packages/git-engine/README.md) also remains executable; its 26 tests do not validate Cofoco features.
 
@@ -27,7 +27,7 @@ The isolated [runtime experiment](experiments/macos-runtime/README.md) builds a 
 - [Current handoff](docs/handoffs/omija-to-todocrew.md): concise context for continuing sessions.
 - [Changelog](CHANGELOG.md).
 
-Next work: complete provider setup/removal and a second-provider check, then the approved native pet UI and real two-provider dogfooding. IDE/Git GUI, agent supervision, cloud/mobile/team features and other desktop OS releases are deferred.
+Next work: provider setup/removal, real Codex integration, full native accessibility/platform checks and two-provider dogfooding. IDE/Git GUI, agent supervision, cloud/mobile/team features and other desktop OS releases are deferred.
 
 ## Development today
 
@@ -47,6 +47,8 @@ The standalone Swift core has its own test suite:
 swift test --package-path packages/cofoco-core
 swift test --package-path packages/cofoco-service
 swift test --package-path packages/cofoco-cli
+swift test --package-path packages/cofoco-app
+bash packages/cofoco-app/scripts/build-local.sh
 ```
 
 See [the core implementation notes](docs/core-service.md) and [local integration notes](docs/local-integration.md) for tested boundaries and remaining work. In a restricted sandbox, SwiftPM may need `--disable-sandbox` and a writable scratch/module-cache path.

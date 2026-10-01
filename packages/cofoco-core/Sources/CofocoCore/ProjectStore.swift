@@ -185,7 +185,7 @@ final class ProjectStore {
         let afterJSON = try after.map { String(data: try JSONEncoder().encode($0), encoding: .utf8)! }
         try db.execute("""
             INSERT INTO change_events(aggregate_type,aggregate_id,actor_id,source,operation,before_json,after_json,reason,resulting_revision,feedback,created_at)
-            VALUES(? ,?,'owner','owner',?,?,?,?,?,'detail',?)
+            VALUES(? ,?,'owner','{}',?,?,?,?,?,'detail',?)
             """, [.text(aggregateType), .text(id), .text(operation), beforeJSON.map(SQLValue.text) ?? .null, afterJSON.map(SQLValue.text) ?? .null,
                   .text("Project settings"), .integer(revision), .text(timestamp())])
     }

@@ -1,7 +1,9 @@
 # Cofoco local CLI/MCP integration — first provider
 
-Status: **initial implementation and isolated Claude Code smoke verified; not a packaged app or completed provider installer**
+Status: **initial implementation and isolated Claude Code smoke verified; provider installer pending**
 Verified: 2026-09-29 on macOS arm64
+
+Update 2026-10-01: [the native app](native-app.md) now bundles/manages this service and exposes owner approvals/settings. The first-provider evidence below remains historical; it does not prove Codex integration or an installed provider configuration. Current suites: core 27/27, service 3/3, CLI 7/7, app 11/11.
 
 ## Implemented boundary
 
@@ -24,7 +26,7 @@ swift build --package-path packages/cofoco-service
 swift build --package-path packages/cofoco-cli
 ```
 
-Run `packages/cofoco-service/.build/debug/cofoco-service --database <isolated-db-path>` in one terminal. In another, `packages/cofoco-cli/.build/debug/cofoco doctor`, then `cofoco integration grant claude-local --scope personal`. That grant explicitly permits Personal Todos for every session using this credential. Grant an individual project scope instead if Personal access is not intended. The service is manually started for this stage; the app does not yet manage it.
+For a standalone transport smoke, run `packages/cofoco-service/.build/debug/cofoco-service --database <isolated-db-path>` in one terminal. In another, `packages/cofoco-cli/.build/debug/cofoco doctor`, then `cofoco integration grant claude-local --scope personal`. That grant explicitly permits Personal Todos for every session using this credential. Prefer an individual project scope if Personal is not intended. Normal native use now starts the helper automatically; do not run competing app/manual services.
 
 For Claude Code, use a temporary MCP config with an absolute path to the built CLI. Its [documented `headersHelper`](https://code.claude.com/docs/en/mcp) invokes the CLI each time and avoids a bearer token in the config file:
 
@@ -51,4 +53,4 @@ This is a manual test configuration, not an idempotent installer. It must not be
 
 ## Remaining gates
 
-Provider config install/remove with backup and idempotency; Codex CLI live integration; production app startup/quit and single-instance ownership; event subscription and owner proposal UI; shutdown/crash recovery; release signing/Keychain access; second-provider concurrent Todo conflict test; normal-use acceptance. A configured grant is not evidence of a currently running agent. The minimal service and CLI do not make the V1 pet app shippable yet.
+Provider config install/remove with backup and idempotency; Codex CLI live integration; complete process-boundary/platform/accessibility acceptance; signed release Keychain access; second-provider concurrent Todo conflict test; normal-use acceptance. Native startup/quit, event polling and owner proposal controls now exist with isolated evidence in [Step 4](native-app.md). A configured grant is not live-agent evidence; local bundles do not imply public release readiness.

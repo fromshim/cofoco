@@ -3,6 +3,8 @@
 Date: 2026-09-28
 Status: **Accepted runtime direction; feasibility verified on the development Mac; production implementation pending**
 
+Update 2026-10-01: native implementation is connected; see [Step 4 evidence](../native-app.md). [ADR 0005](0005-desktop-owner-channel.md) supersedes the planned owner-pipe choice with the existing Keychain-authenticated owner HTTP channel. The experiment evidence below is historical and must not be interpreted as current feature acceptance.
+
 ## Context and decision
 
 The owner approved the existing UI baseline and requested a small window/service/SQLite/packaging experiment before feature implementation. V1 targets one Mac and prioritizes native materials, input, an accessory window and a menu-bar recovery path. The HTML wireframe remains a design reference.

@@ -1,7 +1,7 @@
 # Cofoco V1 product specification
 
-Status: **V1 contract; implementation pending**
-Updated: 2026-09-28
+Status: **V1 contract; native app/core/initial CLI/MCP implemented; full acceptance pending**
+Updated: 2026-10-01
 Decision records: [V1 behavior contract](decisions/0002-todocrew-v1.md); [current product name](decisions/0003-product-name-cofoco.md)
 
 ## 1. Product and audience
@@ -141,7 +141,7 @@ Configured agents resolve permitted context, search existing Todos, read IDs/rev
 - Menu-bar restore, movable pet, keyboard operation, and reduced motion are required. Hiding changes no data; no focus stealing or inactivity punishment.
 - V1 supports a local custom pet image set grouped into `idle`, `working`, `noticed`, and `resting` motions. Idle requires at least one image; each group accepts one or more ordered frames, a one-frame group remains static, and missing optional groups fall back to idle. The setup guide asks for a stand/neutral-blink pair, a three-image alert-present arm circle (`1-2-3-2-1`) whose very short arms overlap in front of the torso while the head subtly bobs forward/back, a three-image in-progress dance (`A-B-A-C-A`) whose face and ears stay upright while the lower body sways and the same left hand points, and a lie/exhale-inhale pair on a consistent transparent canvas. Frames within a motion preserve character size and face-to-body proportion; the renderer swaps complete assets rather than manufacturing motion by translating or rotating one frame. Pose selection is strict: closed bubble uses resting; an open bubble with any visible alert uses the noticed arm circle; otherwise a visible in-progress Todo uses the working dance; otherwise idle. Imported assets stay on-device and are not uploaded for generation or moderation. Setup may provide a downloadable template and copyable prompt for use in an external image tool, but Cofoco does not bundle an image-generation API or require a particular provider. The importer accepts user-selected images without attempting to determine their licensing; the UI reminds the owner that they are responsible for usage rights. A distributable built-in pet still requires original or licensed art.
 
-The [V1 UI direction and wireframe](ui-direction.md), approved by the owner on 2026-09-28, settle dimensions, placement, reference visuals, and animation within this behavior contract. Production implementation and distributable pet artwork remain separate deliverables.
+The [V1 UI direction and wireframe](ui-direction.md), approved by the owner on 2026-09-28, settle dimensions, placement, reference visuals, and animation within this behavior contract. The [native implementation](native-app.md) now connects these surfaces to the shared service. Its default is an original code-drawn pet; reference character art is not bundled. Full UX/platform/release acceptance remains separate.
 
 ## 8. Local integration and privacy
 

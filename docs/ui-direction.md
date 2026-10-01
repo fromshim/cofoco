@@ -1,11 +1,13 @@
 # Cofoco V1 UI direction and wireframe specification
 
-Status: **Owner-approved UI baseline; no production UI implemented**
-Updated: 2026-09-28
+Status: **Owner-approved baseline; native implementation connected; full UX/platform acceptance pending**
+Updated: 2026-10-01
 Prototype: [interactive wireframe](wireframes/todocrew-v1.html)
 Design tokens: [Cofoco design system](../design-system/todocrew/MASTER.md)
 
 The owner explicitly approved this UI baseline on 2026-09-28 for the macOS runtime experiment and subsequent implementation. This approves the interaction and visual direction, not production acceptance or distribution rights for the reference character assets.
+
+Step 4 now implements the primary surfaces in `packages/cofoco-app/`; [native app notes](native-app.md) distinguish observed desktop behavior from remaining accessibility/platform/release gates. Capture stores literal text, provider setup remains manual, and the bundled default is original code-drawn art. Local pet frames import in filename order rather than in-app generation.
 
 ## Direction
 

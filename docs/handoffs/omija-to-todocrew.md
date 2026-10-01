@@ -1,6 +1,6 @@
 # Cofoco V1 — 이어받는 세션을 위한 현재 맥락
 
-Updated: 2026-09-29
+Updated: 2026-10-01
 
 제품명은 **Cofoco**, 앱 패키지/현재 Swift CLI 이름은 `cofoco`로 계획한다. 기존 root package는 보존된 Git 엔진 작업공간으로 유지한다. Omija ADE/Git GUI 개발은 보류했고, 사용자와 기존 Claude Code/Codex CLI가 함께 관리하는 로컬 Todo companion으로 전환했다.
 
@@ -18,7 +18,7 @@ Updated: 2026-09-29
 
 UI는 2026-09-28 사용자가 최종 승인했다. [ADR 0004](../decisions/0004-macos-runtime.md)에서 SwiftUI/AppKit + 앱이 실행하는 Swift 서비스 + 시스템 SQLite3를 선택했다. `experiments/macos-runtime/`의 격리된 실험은 최적화 `.app` 빌드, 로컬 서명, SQLite 트랜잭션/백업, 단일 서비스, 창/도우미 시작·종료를 검증했다. 코디네이터가 최종 번들 검증을 재실행했고 입력 포커스, 한글 붙여넣기, 숨김/복원을 직접 조작해 확인했다.
 
-Swift Todo/Step/Project 코어와 초기 로컬 서비스·CLI·MCP 어댑터가 생겼다. 격리된 Claude Code 실제 세션에서 Personal Todo 생성·조회·시작·재조회를 검증했고 CLI에서도 저장 상태를 확인했다([증거와 한계](../local-integration.md)). 서비스 반복 연결 회귀 테스트도 통과했다. 다만 provider 설정 설치는 수동, Codex CLI와 펫 앱은 아직 없으며 서비스도 앱이 자동 관리하지 않는다. 다음은 두 번째 provider 연동, 설정 설치/제거, 네이티브 펫 UI와 두 provider 도그푸딩이다. 실험의 원시 HTTP 파서·fixture schema·UI 스레드 종료 대기를 제품에 가져가지 않는다. macOS 14는 빌드 하한일 뿐 실제 검증은 macOS 26.5.2 arm64 환경에서 했다. 물리적 다중 디스플레이·전체 접근성·크래시 복구·공개 배포는 후속 검증이다. 구현 전 사용자 작업 지시와 현재 git status를 확인한다.
+Swift 코어·로컬 서비스·CLI·MCP와 `packages/cofoco-app/`의 네이티브 펫 앱이 연결됐다. 실제 Claude Code MCP 검증은 [기존 증거](../local-integration.md), 앱 목록/상세/승인/휴지통/설정/커스텀 펫과 재시작·helper 강제 종료 복구는 [Step 4 증거](../native-app.md)를 읽는다. 앱은 별도 SQLite 쓰기나 private pipe 대신 Keychain-authenticated owner HTTP와 2초 event polling을 쓴다([ADR 0005](../decisions/0005-desktop-owner-channel.md)). 기본 펫은 직접 그린 원본 코드 아트이고 우사기는 번들에 넣지 않는다. Provider 설정은 수동이며 Codex 연동·설정 설치/제거·두 provider 도그푸딩과 전체 접근성/기기 검증이 다음 작업이다. macOS 14는 빌드 하한일 뿐 실행 검증 주장으로 쓰지 않는다. 공개 배포 서명/공증도 남았다. 기존 실험 schema/원시 HTTP 파서/UI 스레드 종료 대기를 재사용하지 않는다. 작업 전 최신 사용자 지시와 git status를 확인한다.
 
 원본은 `974ca87` / `omija-phase0`로 보존했다. Git 엔진은 `packages/git-engine/`에 보존하며 소스/테스트/refs/CLI 계약을 바꾸지 않는다. `docs/archive/omija-ade/`의 로드맵과 orchestration-skill.md는 역사적 자료다. 기존 26개 테스트는 Cofoco 완료 증거가 아니다.
 

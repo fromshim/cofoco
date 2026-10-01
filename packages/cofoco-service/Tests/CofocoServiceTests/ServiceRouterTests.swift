@@ -109,6 +109,124 @@ final class ServiceRouterTests: XCTestCase {
         XCTAssertEqual(deniedRead.statusCode, 401)
     }
 
+    func testDesktopOwnerRoutesCoverDetailReviewTrashAndCursor() async throws {
+        let database = FileManager.default.temporaryDirectory.appendingPathComponent("cofoco-desktop-\(UUID().uuidString).sqlite3")
+        let vault = KeychainVault(testTokens: ["owner-local": "owner-secret", "integration:agent-ui": "agent-secret"])
+        let router = try ServiceRouter(database: database, vault: vault)
+        let owner = "owner-secret"
+
+        let project = await router.handle(request("POST", "/v1/owner/projects", token: owner,
+                                                   object: ["name": "UI Project", "idempotency_key": "ui-project"]), uri: "/v1/owner/projects")
+        let projectID = try XCTUnwrap(json(project)["id"] as? String)
+        let folderPath = FileManager.default.temporaryDirectory.path
+        let folderRoute = "/v1/owner/projects/\(projectID)/folders"
+        let bound = await router.handle(request("POST", folderRoute, token: owner,
+                                                object: ["path": folderPath, "expected_revision": 1, "idempotency_key": "bind-ui"]), uri: folderRoute)
+        XCTAssertEqual(bound.statusCode, 200)
+        let folders = await router.handle(request("GET", folderRoute, token: owner), uri: folderRoute)
+        XCTAssertEqual((try json(folders)["folders"] as? [String])?.count, 1)
+        let renamed = await router.handle(request("PATCH", "/v1/owner/projects/\(projectID)", token: owner,
+                                                  object: ["name": "Renamed UI", "expected_revision": 2, "idempotency_key": "rename-ui"]),
+                                          uri: "/v1/owner/projects/\(projectID)")
+        XCTAssertEqual(renamed.statusCode, 200)
+
+        let grant = await router.handle(request("POST", "/v1/owner/integrations", token: owner,
+                                                object: ["id": "agent-ui", "scopes": ["personal"], "idempotency_key": "grant-ui"]),
+                                        uri: "/v1/owner/integrations")
+        XCTAssertEqual(grant.statusCode, 200)
+        let grants = await router.handle(request("GET", "/v1/owner/integrations", token: owner), uri: "/v1/owner/integrations")
+        XCTAssertEqual((try json(grants)["integrations"] as? [[String: Any]])?.first?["id"] as? String, "agent-ui")
+
+        let create = await router.handle(request("POST", "/v1/owner/todos", token: owner,
+                                                 object: ["title": "Original", "scope": ["kind": "personal"],
+                                                          "reason": "UI capture", "idempotency_key": "ui-create"]), uri: "/v1/owner/todos")
+        let id = try XCTUnwrap((json(create)["todo_ids"] as? [String])?.first)
+        let route = "/v1/owner/todos/\(id)"
+        let edit = await router.handle(request("PATCH", route, token: owner,
+                                               object: ["title": "Edited", "expected_revision": 1,
+                                                        "reason": "UI edit", "idempotency_key": "ui-edit"]), uri: route)
+        XCTAssertEqual(try json(edit)["outcome"] as? String, "updated")
+        let stepRoute = route + "/steps"
+        let step = await router.handle(request("POST", stepRoute, token: owner,
+                                               object: ["operation": "add", "title": "A milestone", "expected_revision": 2,
+                                                        "reason": "UI step", "idempotency_key": "ui-step"]), uri: stepRoute)
+        XCTAssertEqual(try json(step)["outcome"] as? String, "updated")
+        let noteRoute = route + "/notes"
+        let note = await router.handle(request("POST", noteRoute, token: owner,
+                                               object: ["operation": "append", "text": "Context", "expected_revision": 3,
+                                                        "reason": "UI note", "idempotency_key": "ui-note"]), uri: noteRoute)
+        XCTAssertEqual(try json(note)["outcome"] as? String, "updated")
+        let detail = await router.handle(request("GET", route, token: owner), uri: route)
+        let detailed = try XCTUnwrap(json(detail)["todo"] as? [String: Any])
+        XCTAssertEqual(detailed["title"] as? String, "Edited")
+        XCTAssertEqual((detailed["steps"] as? [[String: Any]])?.count, 1)
+        XCTAssertEqual((detailed["notes"] as? [[String: Any]])?.count, 1)
+
+        let initialize: [String: Any] = ["jsonrpc": "2.0", "id": 1, "method": "initialize", "params": [
+            "protocolVersion": "2025-06-18", "capabilities": [:], "clientInfo": ["name": "test", "version": "1"],
+        ]]
+        _ = await router.handle(request("POST", "/mcp", token: "agent-ui.agent-secret", object: initialize), uri: "/mcp")
+        let propose = ["jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": ["name": "cofoco_update_todo", "arguments": [
+            "id": id, "expected_revision": 4, "title": "Agent suggestion", "reason": "Propose title", "idempotency_key": "ui-proposal",
+        ]]] as [String: Any]
+        let proposalResponse = await router.handle(request("POST", "/mcp", token: "agent-ui.agent-secret", object: propose), uri: "/mcp")
+        XCTAssertEqual(proposalResponse.statusCode, 200)
+        let pending = await router.handle(request("GET", "/v1/owner/proposals?state=pending", token: owner),
+                                          uri: "/v1/owner/proposals?state=pending")
+        let proposals = try XCTUnwrap(json(pending)["proposals"] as? [[String: Any]])
+        let proposalID = try XCTUnwrap(proposals.first?["id"] as? String)
+        XCTAssertEqual((proposals.first?["changes"] as? [[String: Any]])?.count, 1)
+        let reviewRoute = "/v1/owner/proposals/\(proposalID)/review"
+        let review = await router.handle(request("POST", reviewRoute, token: owner,
+                                                 object: ["accept": true, "reason": "UI approved", "idempotency_key": "ui-review"]), uri: reviewRoute)
+        XCTAssertEqual(try json(review)["outcome"] as? String, "accepted")
+        let updated = await router.handle(request("GET", route, token: owner), uri: route)
+        XCTAssertEqual((try json(updated)["todo"] as? [String: Any])?["title"] as? String, "Agent suggestion")
+
+        let eventsRoute = "/v1/owner/events?after=0"
+        let feed = await router.handle(request("GET", eventsRoute, token: owner), uri: eventsRoute)
+        XCTAssertEqual(feed.statusCode, 200)
+        XCTAssertGreaterThanOrEqual((try json(feed)["events"] as? [[String: Any]] ?? []).count, 5)
+        let historyRoute = route + "/history"
+        let history = await router.handle(request("GET", historyRoute, token: owner), uri: historyRoute)
+        XCTAssertTrue((try json(history)["events"] as? [[String: Any]] ?? []).count >= 4)
+
+        let delete = await router.handle(request("DELETE", route, token: owner,
+                                                 object: ["expected_revision": 5, "reason": "UI trash", "idempotency_key": "ui-delete"]), uri: route)
+        XCTAssertEqual(try json(delete)["outcome"] as? String, "deleted")
+        let trashRoute = "/v1/owner/todos?include_deleted=true"
+        let trash = await router.handle(request("GET", trashRoute, token: owner), uri: trashRoute)
+        XCTAssertNotNil((try json(trash)["todos"] as? [[String: Any]])?.first?["deleted_at"] as? String)
+        let restoreRoute = route + "/restore"
+        let restore = await router.handle(request("POST", restoreRoute, token: owner,
+                                                  object: ["expected_revision": 6, "reason": "UI restore", "idempotency_key": "ui-restore"]), uri: restoreRoute)
+        XCTAssertEqual(try json(restore)["outcome"] as? String, "restored")
+
+        let stepID = try XCTUnwrap((detailed["steps"] as? [[String: Any]])?.first?["id"] as? String)
+        let noteID = try XCTUnwrap((detailed["notes"] as? [[String: Any]])?.first?["id"] as? String)
+        for (childRoute, childID, revision) in [(stepRoute, stepID, 7), (noteRoute, noteID, 8)] {
+            let deleted = await router.handle(request("POST", childRoute, token: owner, object: [
+                "operation": "delete", "id": childID, "expected_revision": revision,
+                "reason": "delete child", "idempotency_key": "delete-\(childID)",
+            ]), uri: childRoute)
+            XCTAssertEqual(deleted.statusCode, 200)
+        }
+        let tombstones = await router.handle(request("GET", route, token: owner), uri: route)
+        let deletedDetail = try XCTUnwrap(json(tombstones)["todo"] as? [String: Any])
+        XCTAssertEqual((deletedDetail["steps"] as? [[String: Any]])?.count, 0)
+        XCTAssertEqual((deletedDetail["deleted_steps"] as? [[String: Any]])?.count, 1)
+        XCTAssertEqual((deletedDetail["deleted_notes"] as? [[String: Any]])?.count, 1)
+        for (childRoute, childID, revision) in [(stepRoute, stepID, 9), (noteRoute, noteID, 10)] {
+            let restored = await router.handle(request("POST", childRoute, token: owner, object: [
+                "operation": "restore", "id": childID, "expected_revision": revision,
+                "reason": "restore child", "idempotency_key": "restore-\(childID)",
+            ]), uri: childRoute)
+            XCTAssertEqual(restored.statusCode, 200)
+        }
+        let deniedFeed = await router.handle(request("GET", eventsRoute, token: "agent-ui.agent-secret"), uri: eventsRoute)
+        XCTAssertEqual(deniedFeed.statusCode, 401)
+    }
+
     func testConcurrentSameRPCIDKeepsGrantScopesSeparate() async throws {
         let database = FileManager.default.temporaryDirectory.appendingPathComponent("cofoco-service-\(UUID().uuidString).sqlite3")
         let vault = KeychainVault(testTokens: ["owner-local": "owner-secret", "integration:personal-agent": "secret-a",
